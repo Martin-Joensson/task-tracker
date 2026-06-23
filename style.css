@@ -1,0 +1,279 @@
+:root {
+  /* Fonts */
+  --font-limelight: "Limelight", system-ui, -apple-system, sans-serif;
+  --font-jost: "Jost", system-ui, -apple-system, sans-serif;
+
+  /* Brand Colors */
+  --purple-100: oklch(95.6% 0.028 282);
+  --purple-200: oklch(91.7% 0.049 281);
+  --purple-400: oklch(65.382% 0.18828 279.856);
+  --purple-600: oklch(51.52% 0.2801 282.26);
+  --purple-800: oklch(33.8% 0.24 285);
+  --indigo-100: oklch(94.5% 0.015 264);
+
+  /* Neutral Colors */
+  --gray-50: oklch(98.53% 0.0076 250.77);
+  --gray-100: oklch(96.5% 0.01 250);
+  --gray-300: oklch(85.82% 0.0156 254.4);
+  --gray-400: oklch(70.12% 0.019 252.3);
+  --gray-600: oklch(44.51% 0.0304 257.65);
+  --gray-700: oklch(24.51% 0.0304 257.65);
+  --gray-900: oklch(18.23% 0.0298 274.65);
+  --white: oklch(100% 0 0);
+  --transparent: oklch(100% 0 0 / 0);
+
+  /* Utility Colors */
+  --mint-50: oklch(97.5% 0.015 165);
+  --mint-200: oklch(92% 0.035 165);
+  --emerald-100: oklch(97.9% 0.04 144);
+  --emerald-800: oklch(42.71% 0.1654 142.1);
+  --orange-100: oklch(96.8% 0.05 90);
+  --orange-800: oklch(55% 0.14 75);
+  --pink-100: oklch(94.8% 0.035 348);
+  --pink-800: oklch(48.55% 0.2038 350.7);
+  --blue-100: oklch(92.8% 0.05 250);
+  --blue-800: oklch(45% 0.2 260);
+
+  /* Spacing */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.5rem;
+  --spacing-6: 2rem;
+  --spacing-7: 3rem;
+
+  /* Rounded */
+  --rounded: 0.25rem;
+  --rounded-1: 0.4rem;
+  --rounded-2: 0.7rem;
+
+  /* Animations */
+  --lift-hover: translateY(-0.1rem);
+  --lift-active: translateY(0);
+
+  /* Semantic Layer */
+  --color-text: light-dark(var(--gray-900), var(--white));
+  --color-text-muted: light-dark(var(--gray-600), var(--gray-50));
+
+  --color-primary: light-dark(var(--purple-600), var(--purple-200));
+  --color-primary-soft: light-dark(var(--purple-100), var(--purple-800));
+
+  --color-surface: light-dark(var(--white), var(--gray-700));
+  --color-surface-muted: light-dark(var(--gray-50), var(--gray-400));
+  --color-surface-footer: light-dark(var(--gray-900), var(--gray-900));
+
+  --color-shadow: light-dark(var(--gray-100), var(--gray-900));
+
+  --color-filter: light-dark(var(--indigo-100), var(--gray-600));
+  --color-sales: light-dark(
+    var(--emerald-100),
+    oklch(from var(--gray-900) 30% c h)
+  );
+  --color-sales-accent: light-dark(var(--emerald-800), var(--gray-100));
+
+  /* Breakpoints
+
+  40rem = mobile large
+  50rem = tablet
+  60rem = small desktop
+  65rem = large desktop
+
+*/
+}
+
+/* ==========================================
+    Basic reset & typography
+   ========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+a:hover,
+a:focus-visible {
+  text-decoration: underline;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Add dark mode back in if there is time. */
+
+html {
+  color-scheme: light dark;
+}
+
+/*** Global/base styles ***/
+
+body {
+  font-family: var(--font-jost);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-limelight);
+  text-wrap: balance;
+  line-height: 1.1;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--color-text-muted);
+}
+
+p {
+  text-wrap: pretty;
+}
+
+button {
+  --button-background: var(--color-primary);
+  --button-text: var(--color-surface);
+  background-color: var(--button-background);
+  color: var(--button-text);
+  padding-inline: var(--spacing-5);
+  padding-block: var(--spacing-2);
+  border-radius: var(--rounded-1);
+  cursor: pointer;
+  transition: 0.1s ease-out;
+
+  &:hover,
+  &:focus-visible {
+    background-color: oklch(from var(--button-background) l c h / 0.8);
+    color: oklch(from var(--button-text) l c h / 0.8);
+  }
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+  border-radius: 5px;
+  border: 2px solid var(--color-text-muted);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--purple-400);
+}
+
+/* Kevin Powell's content-grid layout pattern */
+.content-grid {
+  --padding-inline: calc(var(--spacing-1) * 6);
+  --content-max-width: 75rem;
+  --breakout-max-width: 85rem;
+
+  --breakout-size: calc(
+    (var(--breakout-max-width) - var(--content-max-width)) / 2
+  );
+
+  display: grid;
+  grid-template-columns:
+    [full-width-start] minmax(var(--padding-inline), 1fr)
+    [breakout-start] minmax(0, var(--breakout-size)) [content-start] minmax(
+      min(100% - (var(--padding-inline) * 2), var(--content-max-width)),
+      1fr
+    )
+    [content-end] minmax(0, var(--breakout-size)) [breakout-end] minmax(
+      var(--padding-inline),
+      1fr
+    )
+    [full-width-end];
+}
+
+.content-grid > :not(.breakout, .full-width),
+.full-width > :not(.breakout, .full-width) {
+  grid-column: content;
+}
+
+.content-grid > .breakout {
+  grid-column: breakout;
+}
+
+.content-grid > .full-width {
+  grid-column: full-width;
+
+  display: grid;
+  grid-template-columns: inherit;
+}
+
+/* Screen-reader utility (Visually Hidden) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+header {
+  background-color: var(--color-primary);
+  padding-block: 1rem;
+  h1 {
+    font-size: 3rem;
+    color: var(--color-primary-soft);
+  }
+}
+
+h2 {
+  font-size: 1.7rem;
+}
+
+.card-grid {
+  --card-min-size: 300px;
+  display: grid;
+  gap: var(--spacing-4);
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min-size), 1fr));
+
+  @media (width < 40rem) {
+    --card-min-size: 240px;
+  }
+}
+
+.card {
+  border: 2px solid white;
+  padding: var(--spacing-2);
+  display: grid;
+  gap: var(--spacing-2);
+
+  h3 {
+    margin-block-start: 2rem;
+  }
+}
