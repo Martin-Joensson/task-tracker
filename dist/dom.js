@@ -64,6 +64,7 @@ const procentTracker = (num1, num2) => {
 };
 const addTask = (taskName, priority = "low") => {
     tasks.push({ name: taskName, status: "pending", priority });
+    updateUI();
 };
 const completeTask = (taskName) => {
     for (let i = 0; i < tasks.length; i++) {
@@ -73,16 +74,11 @@ const completeTask = (taskName) => {
         }
     }
 };
-const showStatistics = () => {
-    showHeader("Statistics");
-    taskCounter();
-    console.log(`Completed: ${completedTasks().length} out of ${tasks.length} - ${procentTracker(completedTasks().length, tasks.length).toFixed(2)}%`);
-    console.log(`Pending: ${pendingTasks().length} out of ${tasks.length} - ${procentTracker(pendingTasks().length, tasks.length).toFixed(2)}%`);
-};
-const taskCounter = () => {
-    console.log(`
-    
-Antal upggifter: ${tasks.length}st`);
+const deleteTask = (taskName) => {
+    const index = tasks.findIndex((task) => task.name === taskName);
+    if (index !== -1) {
+        tasks.splice(index, 1);
+    }
 };
 function renderHeader() {
     if (header) {
@@ -92,9 +88,36 @@ function renderHeader() {
     title.textContent = "Tasuku";
     header?.append(title);
 }
+const form = document.createElement("form");
+const input = document.createElement("input");
+input.type = "text";
+input.placeholder = "New task";
+const select = document.createElement("select");
+const priorities = ["low", "medium", "high"];
+for (const priority of priorities) {
+    const option = document.createElement("option");
+    option.value = priority;
+    option.textContent = priority;
+    select.append(option);
+}
+const addButton = document.createElement("button");
+addButton.type = "submit";
+addButton.textContent = "Add Task";
+form.append(input, select, addButton);
+// Put the form above the task grid
+app?.before(form);
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const taskName = input.value.trim();
+    if (!taskName)
+        return;
+    addTask(taskName, select.value);
+    input.value = "";
+    updateUI();
+});
+const statusBar = document.createElement("div");
+statusBar.classList.add("status-area");
 function renderStatusBar() {
-    const statusBar = document.createElement("div");
-    statusBar.classList.add("status-area");
     statusBar.innerHTML = `<h2 class=>Status</h2>
   <div class="status-bar">
     <p>Total tasks: ${tasks.length} <p>
@@ -133,15 +156,27 @@ function renderTasks() {
             completeButton.classList.add("button-completed");
             completeButton.disabled = true;
         }
+        completeButton.addEventListener("click", () => {
+            completeTask(task.name);
+            updateUI();
+        });
         const deleteButton = document.createElement("button");
         deleteButton.classList.add("btn");
         deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => {
+            deleteTask(task.name);
+            updateUI();
+        });
         const controls = document.createElement("div");
         controls.classList.add("task-controls");
         controls.append(completeButton, deleteButton);
         card.append(title, status, priority, controls);
         app?.append(card);
     }
+}
+function updateUI() {
+    renderStatusBar();
+    renderTasks();
 }
 renderHeader();
 renderStatusBar();
