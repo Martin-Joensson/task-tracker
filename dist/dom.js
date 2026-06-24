@@ -33,14 +33,6 @@ const showHeader = (text) => {
 ${spaceOutput.join("")}${text}
 ${output.join("")}`);
 };
-const showTasks = (tasks) => {
-    for (let i = 0; i < tasks.length; i++) {
-        const task = tasks[i];
-        if (task) {
-            console.log(`${i + 1}: ${task.name}  ${task.priority} ${task.status}`);
-        }
-    }
-};
 const completedTasks = () => {
     const completedTasks = [];
     tasks.map((item) => {
@@ -50,29 +42,18 @@ const completedTasks = () => {
     });
     return completedTasks;
 };
-const pendingTasks = () => {
-    const pendingTasks = [];
-    tasks.map((item) => {
-        if (item.status === "pending") {
-            pendingTasks.push(item);
-        }
-    });
-    return pendingTasks;
-};
 const procentTracker = (num1, num2) => {
-    return (num1 / num2) * 100;
+    return ((num1 / num2) * 100).toFixed(2);
 };
 const addTask = (taskName, priority = "low") => {
     tasks.push({ name: taskName, status: "pending", priority });
     updateUI();
 };
-const completeTask = (taskName) => {
-    for (let i = 0; i < tasks.length; i++) {
-        const task = tasks[i];
-        if (task.name === taskName) {
-            task.status = "completed";
-        }
-    }
+const toggleTask = (taskName) => {
+    const task = tasks.find((task) => task.name === taskName);
+    if (!task)
+        return;
+    task.status = task.status === "pending" ? "completed" : "pending";
 };
 const deleteTask = (taskName) => {
     const index = tasks.findIndex((task) => task.name === taskName);
@@ -123,6 +104,7 @@ function renderStatusBar() {
     <p>Total tasks: ${tasks.length} <p>
     <p>Completed: ${completedTasks().length} <p>
     <p> High Priority: ${completedTasks().length} </p>
+    <p> Procent complete: ${procentTracker(completedTasks().length, tasks.length)}%</p>
     </div>
     `;
     app?.before(statusBar);
@@ -143,9 +125,9 @@ function renderTasks() {
         const title = document.createElement("h2");
         title.textContent = task.name;
         const status = document.createElement("p");
-        status.textContent = `Status: ${task.status}`;
+        status.textContent = `Status: ${task.status.charAt(0).toUpperCase() + task.status.slice(1)}`;
         const priority = document.createElement("p");
-        priority.textContent = `Priority: ${task.priority}`;
+        priority.textContent = `Priority: ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`;
         const completeButton = document.createElement("button");
         completeButton.classList.add("btn");
         if (task.status === "pending") {
@@ -154,10 +136,9 @@ function renderTasks() {
         if (task.status === "completed") {
             completeButton.textContent = "Nice!";
             completeButton.classList.add("button-completed");
-            completeButton.disabled = true;
         }
         completeButton.addEventListener("click", () => {
-            completeTask(task.name);
+            toggleTask(task.name);
             updateUI();
         });
         const deleteButton = document.createElement("button");
