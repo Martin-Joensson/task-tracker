@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script type="module" src="./dist/main.js"></script>
+    <script type="module" src="./dist/dom.js"></script>
     <!-- <script type="module" src="./dist/marathon.js"></script> -->
     <!-- <script type="module" src="./dist/quiz.js"></script> -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,23 +16,11 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <header class="content-grid full-width">
-      <h1 id="title">Task Tracker</h1>
-
+    <header id="header" class="content-grid full-width">
+      <h1 id="title"></h1>
     </header>
-
-    <section class="content-grid">
-      <!-- <h2>Tasks</h2> -->
-      <section id="task-grid" class="card-grid">
-        <article class="card">
-          <h2>Task Name</h2>
-          <p>Priority: <span>Priority number</span></p>
-          <h3>Description:</h3>
-          <p>Decription...</p>
-          <h3>Notes:</h3>
-          <p>Notes...</p>
-        </article>
-      </section>
-     </section>
+    <div class="content-grid">
+      <section id="task-grid" class="card-grid"></section>
+    </div>
   </body>
 </html>

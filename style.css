@@ -274,8 +274,6 @@ h2 {
   display: grid;
   gap: var(--spacing-2);
 
-  
-
   h3 {
     margin-block-start: 2rem;
   }
@@ -299,9 +297,8 @@ h2 {
   border: 2px solid var(--color-lax);
 }
 
-.button-completed{
+.button-completed {
   background-color: var(--color-lax);
-
 }
 /* 
 button:disabled,
@@ -317,19 +314,28 @@ button[disabled]:hover {
 } */
 
 .card {
-    position: relative;
+  position: relative;
 }
 
 .card.high-priority::before {
-    content: "!";
-    position: absolute;
-    top: -1.6rem;
-    rotate: 10deg;
-    right: var(--spacing-2);
-    font-family: var(--font-limelight);
-    font-size: 8rem;
-    color: oklch(from var(--color-alert) l c h / calc(alpha - 0.75));
-    font-weight: bold;
+  content: "!";
+  position: absolute;
+  top: -1.6rem;
+  rotate: 10deg;
+  right: var(--spacing-2);
+  font-family: var(--font-limelight);
+  font-size: 8rem;
+  color: oklch(from var(--color-alert) l c h / calc(alpha - 0.75));
+  font-weight: bold;
+}
 
+.status-area {
+  padding-block: 2rem;
+  background-color: var(--color-surface);
+}
+
+.status-bar {
+  display: flex;
+  gap: var(--spacing-2);
 
 }
