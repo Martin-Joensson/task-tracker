@@ -1,3 +1,8 @@
+const app = document.querySelector("#task-grid");
+
+const title = document.querySelector("#title") as HTMLHeadingElement;
+title.textContent = "Mina Tasks";
+
 type Priority = "low" | "medium" | "high";
 
 type Task = {
@@ -14,6 +19,8 @@ const tasks: Task[] = [
   { name: "Handla", status: "pending", priority: "medium" },
   { name: "Tvätta", status: "pending", priority: "low" },
   { name: "Plugga", status: "pending", priority: "high" },
+  { name: "Testa", status: "pending", priority: "high" },
+  { name: "Testa", status: "pending", priority: "high" },
 ];
 
 const showHeader = (text: string) => {
@@ -129,3 +136,59 @@ showTasks(tasks);
 taskCounter();
 
 showStatistics();
+
+function renderTasks(): void {
+  if (app) {
+    app.innerHTML = "";
+  }
+
+  for (const task of tasks) {
+    const card = document.createElement("article");
+    card.classList.add("card");
+
+    if (task.priority === "high") {
+      card.classList.add("high-priority");
+    }
+
+    if (task.priority === "low") {
+      card.classList.add("low-priority");
+    }
+
+    const title = document.createElement("h2");
+    title.textContent = task.name;
+
+    const status = document.createElement("p");
+    status.textContent = `Status: ${task.status}`;
+
+    const priority = document.createElement("p");
+    priority.textContent = `Priority: ${task.priority}`;
+
+    const completeButton = document.createElement("button");
+    completeButton.classList.add("btn");
+    if (task.status === "pending") {
+      completeButton.textContent = "Complete";
+    }
+
+    if (task.status === "completed") {
+      completeButton.textContent = "Nice!";
+      completeButton.classList.add("button-completed");
+      completeButton.disabled = true;
+    }
+
+
+
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("btn");
+    deleteButton.textContent = "Delete";
+
+    const controls = document.createElement("div");
+    controls.classList.add("task-controls");
+    controls.append(completeButton, deleteButton);
+
+    card.append(title, status, priority, controls);
+
+    app?.append(card);
+  }
+}
+
+renderTasks();
