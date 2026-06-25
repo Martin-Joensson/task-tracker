@@ -3,14 +3,15 @@ const app = document.querySelector("#task-grid");
 const title = document.querySelector("#title");
 title.textContent = "Mina Tasks";
 const tasks = [
-    { name: "Lära oss TS", status: "pending", priority: "low" },
-    { name: "Träna", status: "completed", priority: "low" },
-    { name: "Handla", status: "pending", priority: "medium" },
-    { name: "Tvätta", status: "completed", priority: "low" },
-    { name: "Plugga", status: "pending", priority: "high" },
-    { name: "Testa", status: "pending", priority: "high" },
-    { name: "Testa", status: "pending", priority: "high" },
+    { id: 1, name: "Lära oss TS", status: "pending", priority: "low" },
+    { id: 2, name: "Träna", status: "completed", priority: "low" },
+    { id: 3, name: "Handla", status: "pending", priority: "medium" },
+    { id: 4, name: "Tvätta", status: "completed", priority: "low" },
+    { id: 5, name: "Plugga", status: "pending", priority: "high" },
+    { id: 6, name: "Testa", status: "pending", priority: "high" },
+    { id: 7, name: "Testa", status: "pending", priority: "high" },
 ];
+let nextId = 8;
 const showHeader = (text) => {
     let output = [];
     let spaceOutput = [];
@@ -46,17 +47,17 @@ const procentTracker = (num1, num2) => {
     return ((num1 / num2) * 100).toFixed(2);
 };
 const addTask = (taskName, priority = "low") => {
-    tasks.push({ name: taskName, status: "pending", priority });
+    tasks.push({ id: nextId++, name: taskName, status: "pending", priority });
     updateUI();
 };
-const toggleTask = (taskName) => {
-    const task = tasks.find((task) => task.name === taskName);
+const toggleTask = (taskId) => {
+    const task = tasks.find((task) => task.id === taskId);
     if (!task)
         return;
     task.status = task.status === "pending" ? "completed" : "pending";
 };
-const deleteTask = (taskName) => {
-    const index = tasks.findIndex((task) => task.name === taskName);
+const deleteTask = (taskId) => {
+    const index = tasks.findIndex((task) => task.id === taskId);
     if (index !== -1) {
         tasks.splice(index, 1);
     }
@@ -78,7 +79,7 @@ const priorities = ["low", "medium", "high"];
 for (const priority of priorities) {
     const option = document.createElement("option");
     option.value = priority;
-    option.textContent = priority;
+    option.textContent = priority.charAt(0).toUpperCase() + priority.slice(1);
     select.append(option);
 }
 const addButton = document.createElement("button");
@@ -119,6 +120,9 @@ function renderTasks() {
         if (task.priority === "high") {
             card.classList.add("high-priority");
         }
+        if (task.priority === "medium") {
+            card.classList.add("medium-priority");
+        }
         if (task.priority === "low") {
             card.classList.add("low-priority");
         }
@@ -138,14 +142,14 @@ function renderTasks() {
             completeButton.classList.add("button-completed");
         }
         completeButton.addEventListener("click", () => {
-            toggleTask(task.name);
+            toggleTask(task.id);
             updateUI();
         });
         const deleteButton = document.createElement("button");
         deleteButton.classList.add("btn");
         deleteButton.textContent = "Delete";
         deleteButton.addEventListener("click", () => {
-            deleteTask(task.name);
+            deleteTask(task.id);
             updateUI();
         });
         const controls = document.createElement("div");

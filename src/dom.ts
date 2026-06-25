@@ -7,6 +7,7 @@ title.textContent = "Mina Tasks";
 type Priority = "low" | "medium" | "high";
 
 type Task = {
+  id: number;
   name: string;
   status: "pending" | "completed";
   priority: Priority;
@@ -15,14 +16,16 @@ type Task = {
 };
 
 const tasks: Task[] = [
-  { name: "Lära oss TS", status: "pending", priority: "low" },
-  { name: "Träna", status: "completed", priority: "low" },
-  { name: "Handla", status: "pending", priority: "medium" },
-  { name: "Tvätta", status: "completed", priority: "low" },
-  { name: "Plugga", status: "pending", priority: "high" },
-  { name: "Testa", status: "pending", priority: "high" },
-  { name: "Testa", status: "pending", priority: "high" },
+  { id: 1, name: "Lära oss TS", status: "pending", priority: "low" },
+  { id: 2, name: "Träna", status: "completed", priority: "low" },
+  { id: 3, name: "Handla", status: "pending", priority: "medium" },
+  { id: 4, name: "Tvätta", status: "completed", priority: "low" },
+  { id: 5, name: "Plugga", status: "pending", priority: "high" },
+  { id: 6, name: "Testa", status: "pending", priority: "high" },
+  { id: 7, name: "Testa", status: "pending", priority: "high" },
 ];
+
+let nextId = 8;
 
 const showHeader = (text: string) => {
   let output = [];
@@ -49,8 +52,6 @@ ${spaceOutput.join("")}${text}
 ${output.join("")}`);
 };
 
-
-
 const completedTasks = () => {
   const completedTasks: Task[] = [];
 
@@ -63,27 +64,25 @@ const completedTasks = () => {
   return completedTasks;
 };
 
-
 const procentTracker = (num1: number, num2: number) => {
   return ((num1 / num2) * 100).toFixed(2);
 };
 
 const addTask = (taskName: string, priority: Priority = "low"): void => {
-  tasks.push({ name: taskName, status: "pending", priority });
+  tasks.push({ id: nextId++, name: taskName, status: "pending", priority });
   updateUI();
 };
 
-const toggleTask = (taskName: string): void => {
-  const task = tasks.find((task) => task.name === taskName);
+const toggleTask = (taskId: number): void => {
+  const task = tasks.find((task) => task.id === taskId);
 
   if (!task) return;
 
   task.status = task.status === "pending" ? "completed" : "pending";
 };
 
-
-const deleteTask = (taskName: string): void => {
-  const index = tasks.findIndex((task) => task.name === taskName);
+const deleteTask = (taskId: number): void => {
+  const index = tasks.findIndex((task) => task.id === taskId);
 
   if (index !== -1) {
     tasks.splice(index, 1);
@@ -113,7 +112,7 @@ const priorities: Priority[] = ["low", "medium", "high"];
 for (const priority of priorities) {
   const option = document.createElement("option");
   option.value = priority;
-  option.textContent = priority;
+  option.textContent = priority.charAt(0).toUpperCase() + priority.slice(1);
   select.append(option);
 }
 
@@ -168,6 +167,10 @@ function renderTasks(): void {
       card.classList.add("high-priority");
     }
 
+    if (task.priority === "medium") {
+      card.classList.add("medium-priority");
+    }
+
     if (task.priority === "low") {
       card.classList.add("low-priority");
     }
@@ -176,7 +179,7 @@ function renderTasks(): void {
     title.textContent = task.name;
 
     const status = document.createElement("p");
-    status.textContent = `Status: ${task.status.charAt(0).toUpperCase()+ task.status.slice(1)}`;
+    status.textContent = `Status: ${task.status.charAt(0).toUpperCase() + task.status.slice(1)}`;
 
     const priority = document.createElement("p");
     priority.textContent = `Priority: ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`;
@@ -193,7 +196,7 @@ function renderTasks(): void {
     }
 
     completeButton.addEventListener("click", () => {
-      toggleTask(task.name);
+      toggleTask(task.id);
       updateUI();
     });
 
@@ -202,7 +205,7 @@ function renderTasks(): void {
     deleteButton.textContent = "Delete";
 
     deleteButton.addEventListener("click", () => {
-      deleteTask(task.name);
+      deleteTask(task.id);
       updateUI();
     });
 

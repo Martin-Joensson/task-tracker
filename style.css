@@ -314,7 +314,19 @@ button[disabled]:hover {
 } */
 
 .card {
+  --_card-border: var(--card-border, white);
   position: relative;
+  border-color: var(--_card-border);
+}
+.card.low-priority {
+  --card-border: var(--color-lax);
+}
+.card.medium-priority {
+  --card-border: var(--color-surface-soft);
+}
+
+.card.high-priority {
+  --card-border: var(--color-alert);
 }
 
 .card.high-priority::before {
@@ -337,5 +349,10 @@ button[disabled]:hover {
 .status-bar {
   display: flex;
   gap: var(--spacing-2);
+}
 
+form {
+  display: flex;
+  gap: 1rem;
+  padding-block: 1rem;
 }
