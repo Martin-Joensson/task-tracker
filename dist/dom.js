@@ -1,15 +1,20 @@
 const header = document.querySelector("#header");
 const app = document.querySelector("#task-grid");
-const title = document.querySelector("#title");
-title.textContent = "Mina Tasks";
 const tasks = [
     { id: 1, name: "Lära oss TS", status: "pending", priority: "low" },
-    { id: 2, name: "Träna", status: "completed", priority: "high" },
+    { id: 2, name: "Träna", status: "pending", priority: "high" },
     { id: 3, name: "Handla", status: "pending", priority: "medium" },
     { id: 4, name: "Tvätta", status: "completed", priority: "low" },
+    //   { id: 5, name: "Lära oss TS", status: "pending", priority: "low" },
+    //   { id: 6, name: "Träna", status: "completed", priority: "high" },
+    //   { id: 7, name: "Handla", status: "pending", priority: "medium" },
+    //   { id: 8, name: "Tvätta", status: "completed", priority: "low" },
+    //   { id: 9, name: "Lära oss TS", status: "pending", priority: "low" },
+    //   { id: 10, name: "Träna", status: "completed", priority: "high" },
+    //   { id: 11, name: "Handla", status: "pending", priority: "medium" },
+    //   { id: 12, name: "Tvätta", status: "completed", priority: "low" },
 ];
 let nextId = tasks.length + 1;
-console.log(tasks);
 const getStatusTasks = (status) => {
     return tasks.filter((tasks) => tasks.status === status);
 };
@@ -29,6 +34,12 @@ const toggleTask = (taskId) => {
         return;
     task.status = task.status === "pending" ? "completed" : "pending";
 };
+const makeSure = (taskId) => {
+    const task = tasks.find((task) => task.id === taskId);
+    if (!task)
+        return;
+    task.status = task.status === "pending" ? "completed" : "pending";
+};
 const deleteTask = (taskId) => {
     const index = tasks.findIndex((task) => task.id === taskId);
     if (index !== -1) {
@@ -43,7 +54,12 @@ function renderHeader() {
     title.textContent = "用 Tasuku";
     header?.append(title);
 }
+const addBar = document.createElement("div");
+addBar.classList.add("add-area");
+const addTitle = document.createElement("h2");
+addTitle.textContent = "Add tasks";
 const form = document.createElement("form");
+form.classList.add("add-form");
 const input = document.createElement("input");
 input.type = "text";
 input.placeholder = "New task";
@@ -58,7 +74,7 @@ for (const priority of priorities) {
 const addButton = document.createElement("button");
 addButton.type = "submit";
 addButton.textContent = "Add Task";
-form.append(input, select, addButton);
+form.append(addTitle, input, select, addButton);
 // Put the form above the task grid
 app?.before(form);
 form.addEventListener("submit", (event) => {
@@ -80,9 +96,9 @@ function renderStatusBar() {
     const highPriorityTasks = getPriorityTasks("high");
     statusBar.innerHTML = `<h2 class=>Status</h2>
   <div class="status-bar">
-    <p>Total tasks: ${tasks.length} <p>
-    <p>Completed: ${completedTasks.length} <p>
-    <p>Pending: ${pendingTasks.length} <p>
+    <p>Total tasks: ${tasks.length} </p>
+    <p>Completed: ${completedTasks.length} </p>
+    <p>Pending: ${pendingTasks.length} </p>
     <p> Low Priority: ${lowPriorityTasks.length} </p>
     <p> Medium Priority: ${mediumPriorityTasks.length} </p>
     <p> High Priority: ${highPriorityTasks.length} </p>
@@ -101,14 +117,24 @@ function renderTasks() {
     }
     for (const task of tasks) {
         const card = document.createElement("article");
-        card.classList.add("card");
-        card.classList.add(`${task.priority}-priority`);
+        card.classList.add("card", `${task.priority}-priority`);
         const title = document.createElement("h2");
         title.textContent = task.name;
+        const ribbon = document.createElement("div");
+        ribbon.classList.add("ribbon");
+        if (task.status === "completed") {
+            ribbon.textContent = task.status;
+            ribbon.classList.add("ribbon-complete");
+        }
+        ribbon.classList.add("ribbon");
+        if (task.status === "pending") {
+            ribbon.textContent = task.priority;
+        }
         const status = document.createElement("p");
-        status.textContent = `Status: ${capitalize(task.status)}`;
-        const priority = document.createElement("p");
-        priority.textContent = `Priority: ${capitalize(task.priority)}`;
+        //   status.textContent = `Status: ${capitalize(task.status)}`;
+        status.classList.add(task.status);
+        // const priority = document.createElement("p");
+        // priority.textContent = `Priority: ${capitalize(task.priority)}`;
         const completeButton = document.createElement("button");
         completeButton.classList.add("btn");
         if (task.status === "pending") {
@@ -123,18 +149,26 @@ function renderTasks() {
             updateUI();
         });
         const deleteButton = document.createElement("button");
-        deleteButton.classList.add("btn");
-        deleteButton.textContent = "Delete";
+        deleteButton.classList.add("btn", "delete-btn");
+        deleteButton.textContent = `Delete`;
         deleteButton.addEventListener("click", () => {
-            deleteTask(task.id);
+            if (deleteButton.textContent === "Delete") {
+                deleteButton.textContent = "Sure?";
+                completeButton.textContent = "No!";
+                console.log("Sure?");
+                return;
+            }
+            if (deleteButton.textContent === "Sure?") {
+                deleteButton.textContent = "Delete";
+                deleteTask(task.id);
+            }
             updateUI();
         });
         const controls = document.createElement("div");
         controls.classList.add("task-controls");
         controls.append(completeButton, deleteButton);
-        card.append(title, status, priority, controls);
+        card.append(title, ribbon, status, controls);
         app?.prepend(card);
-        console.log(tasks);
     }
 }
 renderHeader();
