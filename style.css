@@ -341,6 +341,10 @@ button[disabled]:hover {
   font-weight: bold;
 }
 
+.card::has(completed) {
+  background-color: red;
+}
+
 .status-area {
   padding-block: 2rem;
   background-color: var(--color-surface);

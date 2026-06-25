@@ -5,11 +5,12 @@ const title = document.querySelector("#title") as HTMLHeadingElement;
 title.textContent = "Mina Tasks";
 
 type Priority = "low" | "medium" | "high";
+type Status = "pending" | "completed";
 
 type Task = {
   id: number;
   name: string;
-  status: "pending" | "completed";
+  status: Status;
   priority: Priority;
   description?: string;
   notes?: string;
@@ -17,60 +18,31 @@ type Task = {
 
 const tasks: Task[] = [
   { id: 1, name: "Lära oss TS", status: "pending", priority: "low" },
-  { id: 2, name: "Träna", status: "completed", priority: "low" },
+  { id: 2, name: "Träna", status: "completed", priority: "high" },
   { id: 3, name: "Handla", status: "pending", priority: "medium" },
   { id: 4, name: "Tvätta", status: "completed", priority: "low" },
-  { id: 5, name: "Plugga", status: "pending", priority: "high" },
-  { id: 6, name: "Testa", status: "pending", priority: "high" },
-  { id: 7, name: "Testa", status: "pending", priority: "high" },
 ];
 
-let nextId = 8;
+let nextId = tasks.length + 1;
 
-const showHeader = (text: string) => {
-  let output = [];
-  let spaceOutput = [];
-  let size = text.length * 2;
-  let space = text.length / 2;
+console.log(tasks);
 
-  if (text.length % 2 === 0) {
-    for (let i = 0; i < size; i++) {
-      output.push("=");
-    }
-  } else {
-    for (let i = 0; i <= size; i++) {
-      output.push("=");
-    }
-  }
-
-  for (let i = 0; i < space; i++) {
-    spaceOutput.push(" ");
-  }
-
-  console.log(`${output.join("")}
-${spaceOutput.join("")}${text}
-${output.join("")}`);
+const getStatusTasks = (status: Status): Task[] => {
+  return tasks.filter((tasks) => tasks.status === status);
 };
-
-const completedTasks = () => {
-  const completedTasks: Task[] = [];
-
-  tasks.map((item) => {
-    if (item.status === "completed") {
-      completedTasks.push(item);
-    }
-  });
-
-  return completedTasks;
+const getPriorityTasks = (priority: Priority): Task[] => {
+  return tasks.filter((tasks) => tasks.priority === priority);
 };
 
 const procentTracker = (num1: number, num2: number) => {
   return ((num1 / num2) * 100).toFixed(2);
 };
 
+const capitalize = (text: string): string =>
+  text.charAt(0).toUpperCase() + text.slice(1);
+
 const addTask = (taskName: string, priority: Priority = "low"): void => {
   tasks.push({ id: nextId++, name: taskName, status: "pending", priority });
-  updateUI();
 };
 
 const toggleTask = (taskId: number): void => {
@@ -94,7 +66,7 @@ function renderHeader(): void {
     header.innerHTML = "";
   }
   const title = document.createElement("h1");
-  title.textContent = "Tasuku";
+  title.textContent = "用 Tasuku";
 
   header?.append(title);
 }
@@ -112,7 +84,7 @@ const priorities: Priority[] = ["low", "medium", "high"];
 for (const priority of priorities) {
   const option = document.createElement("option");
   option.value = priority;
-  option.textContent = priority.charAt(0).toUpperCase() + priority.slice(1);
+  option.textContent = capitalize(priority);
   select.append(option);
 }
 
@@ -143,15 +115,30 @@ const statusBar = document.createElement("div");
 statusBar.classList.add("status-area");
 
 function renderStatusBar(): void {
+  const completedTasks = getStatusTasks("completed");
+  const pendingTasks = getStatusTasks("pending");
+
+  const lowPriorityTasks = getPriorityTasks("low");
+  const mediumPriorityTasks = getPriorityTasks("medium");
+  const highPriorityTasks = getPriorityTasks("high");
+
   statusBar.innerHTML = `<h2 class=>Status</h2>
   <div class="status-bar">
     <p>Total tasks: ${tasks.length} <p>
-    <p>Completed: ${completedTasks().length} <p>
-    <p> High Priority: ${completedTasks().length} </p>
-    <p> Procent complete: ${procentTracker(completedTasks().length, tasks.length)}%</p>
+    <p>Completed: ${completedTasks.length} <p>
+    <p>Pending: ${pendingTasks.length} <p>
+    <p> Low Priority: ${lowPriorityTasks.length} </p>
+    <p> Medium Priority: ${mediumPriorityTasks.length} </p>
+    <p> High Priority: ${highPriorityTasks.length} </p>
+    <p> Procent complete: ${procentTracker(completedTasks.length, tasks.length)}%</p>
     </div>
     `;
   app?.before(statusBar);
+}
+
+function updateUI(): void {
+  renderStatusBar();
+  renderTasks();
 }
 
 function renderTasks(): void {
@@ -162,27 +149,16 @@ function renderTasks(): void {
   for (const task of tasks) {
     const card = document.createElement("article");
     card.classList.add("card");
-
-    if (task.priority === "high") {
-      card.classList.add("high-priority");
-    }
-
-    if (task.priority === "medium") {
-      card.classList.add("medium-priority");
-    }
-
-    if (task.priority === "low") {
-      card.classList.add("low-priority");
-    }
+    card.classList.add(`${task.priority}-priority`);
 
     const title = document.createElement("h2");
     title.textContent = task.name;
 
     const status = document.createElement("p");
-    status.textContent = `Status: ${task.status.charAt(0).toUpperCase() + task.status.slice(1)}`;
+    status.textContent = `Status: ${capitalize(task.status)}`;
 
     const priority = document.createElement("p");
-    priority.textContent = `Priority: ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}`;
+    priority.textContent = `Priority: ${capitalize(task.priority)}`;
 
     const completeButton = document.createElement("button");
     completeButton.classList.add("btn");
@@ -191,7 +167,7 @@ function renderTasks(): void {
     }
 
     if (task.status === "completed") {
-      completeButton.textContent = "Nice!";
+      completeButton.textContent = "Undo";
       completeButton.classList.add("button-completed");
     }
 
@@ -215,13 +191,9 @@ function renderTasks(): void {
 
     card.append(title, status, priority, controls);
 
-    app?.append(card);
+    app?.prepend(card);
+    console.log(tasks);
   }
-}
-
-function updateUI(): void {
-  renderStatusBar();
-  renderTasks();
 }
 
 renderHeader();
