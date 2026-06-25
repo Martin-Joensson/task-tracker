@@ -325,8 +325,8 @@ h2 {
   gap: 1rem;
 }
 
-.button-completed {
-  background-color: var(--color-low);
+.complete-btn {
+  flex-grow:1;
 }
 
 /* HTML: <div class="ribbon">Your text content</div> */

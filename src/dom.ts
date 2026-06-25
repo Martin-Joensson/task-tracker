@@ -191,14 +191,13 @@ function renderTasks(): void {
     // priority.textContent = `Priority: ${capitalize(task.priority)}`;
 
     const completeButton = document.createElement("button");
-    completeButton.classList.add("btn");
+    completeButton.classList.add("btn", "complete-btn");
     if (task.status === "pending") {
       completeButton.textContent = "Complete";
     }
 
     if (task.status === "completed") {
       completeButton.textContent = "Undo";
-      completeButton.classList.add("button-completed");
     }
 
     completeButton.addEventListener("click", () => {
