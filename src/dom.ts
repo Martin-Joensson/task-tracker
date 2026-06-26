@@ -58,14 +58,6 @@ const toggleTask = (taskId: number): void => {
   task.status = task.status === "pending" ? "completed" : "pending";
 };
 
-const makeSure = (taskId: number): void => {
-  const task = tasks.find((task) => task.id === taskId);
-
-  if (!task) return;
-
-  task.status = task.status === "pending" ? "completed" : "pending";
-};
-
 const deleteTask = (taskId: number): void => {
   const index = tasks.findIndex((task) => task.id === taskId);
 
@@ -74,7 +66,7 @@ const deleteTask = (taskId: number): void => {
   }
 };
 
-function renderHeader(): void {
+function createHeader(): void {
   if (header) {
     header.innerHTML = "";
   }
@@ -84,51 +76,53 @@ function renderHeader(): void {
   header?.append(title);
 }
 
-const addBar = document.createElement("div");
-addBar.classList.add("add-area");
-const addTitle = document.createElement("h2");
-addTitle.textContent = "Add tasks";
+function createAddBar(): void {
+  const addBar = document.createElement("div");
+  addBar.classList.add("add-area");
+  const addTitle = document.createElement("h2");
+  addTitle.textContent = "Add tasks";
 
-const form = document.createElement("form");
-form.classList.add("add-form");
+  const form = document.createElement("form");
+  form.classList.add("add-form");
 
-const input = document.createElement("input");
-input.type = "text";
-input.placeholder = "New task";
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "New task";
 
-const select = document.createElement("select");
+  const select = document.createElement("select");
 
-const priorities: Priority[] = ["low", "medium", "high"];
+  const priorities: Priority[] = ["low", "medium", "high"];
 
-for (const priority of priorities) {
-  const option = document.createElement("option");
-  option.value = priority;
-  option.textContent = capitalize(priority);
-  select.append(option);
+  for (const priority of priorities) {
+    const option = document.createElement("option");
+    option.value = priority;
+    option.textContent = capitalize(priority);
+    select.append(option);
+  }
+
+  const addButton = document.createElement("button");
+  addButton.type = "submit";
+  addButton.textContent = "Add Task";
+
+  form.append(addTitle, input, select, addButton);
+
+  // Put the form above the task grid
+  app?.before(form);
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const taskName = input.value.trim();
+
+    if (!taskName) return;
+
+    addTask(taskName, select.value as Priority);
+
+    input.value = "";
+
+    updateUI();
+  });
 }
-
-const addButton = document.createElement("button");
-addButton.type = "submit";
-addButton.textContent = "Add Task";
-
-form.append(addTitle, input, select, addButton);
-
-// Put the form above the task grid
-app?.before(form);
-
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  const taskName = input.value.trim();
-
-  if (!taskName) return;
-
-  addTask(taskName, select.value as Priority);
-
-  input.value = "";
-
-  updateUI();
-});
 
 const statusBar = document.createElement("div");
 statusBar.classList.add("status-area");
@@ -235,6 +229,7 @@ function renderTasks(): void {
   }
 }
 
-renderHeader();
+createHeader();
+createAddBar();
 renderStatusBar();
 renderTasks();
