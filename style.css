@@ -29,7 +29,6 @@
   --emerald-800: oklch(42.71% 0.1654 142.1);
   --orange-100: oklch(75% 0.55 100);
   --orange-800: oklch(75% 0.55 100);
-
   --color-complete: rgba(45, 255, 196, 0.7);
 
   /* Spacing */
@@ -59,20 +58,10 @@
 
   --color-surface: light-dark(var(--white), var(--gray-700));
   --color-surface-muted: light-dark(var(--gray-50), var(--gray-400));
-  --color-surface-footer: light-dark(var(--gray-900), var(--gray-900));
 
   --color-low: light-dark(var(--gray-700), var(--gray-400));
   --color-medium: light-dark(var(--gray-600), var(--gray-600));
   --color-high: light-dark(var(--orange-100), var(--orange-800));
-
-  --color-shadow: light-dark(var(--gray-100), var(--gray-900));
-
-  --color-filter: light-dark(var(--indigo-100), var(--gray-600));
-  --color-sales: light-dark(
-    var(--emerald-100),
-    oklch(from var(--gray-900) 30% c h)
-  );
-  --color-sales-accent: light-dark(var(--emerald-800), var(--gray-100));
 
   /* Breakpoints
 
@@ -123,6 +112,7 @@ ul {
 html {
   color-scheme: light dark;
 
+  /* From CSS Patterns*/
   --s: 100px; /* control the size*/
   --c1: var(--gray-400, white);
   --c2: var(--gray-700, white);
@@ -191,12 +181,24 @@ button {
   cursor: pointer;
   transition: 0.1s ease-out;
 
-
   &:hover,
   &:focus-visible {
     background-color: oklch(from var(--button-background) l c h / 0.8);
     color: oklch(from var(--button-text) l c h / 0.8);
   }
+}
+
+header {
+  background-color: var(--color-primary);
+  padding-block: 1rem;
+  h1 {
+    font-size: 3rem;
+    color: var(--color-primary-soft);
+  }
+}
+
+h2 {
+  font-size: 1.7rem;
 }
 
 /* Custom premium scrollbar */
@@ -271,19 +273,6 @@ button {
   border: 0;
 }
 
-header {
-  background-color: var(--color-primary);
-  padding-block: 1rem;
-  h1 {
-    font-size: 3rem;
-    color: var(--color-primary-soft);
-  }
-}
-
-h2 {
-  font-size: 1.7rem;
-}
-
 .add-form {
   background-color: var(--color-surface);
   border: 2px solid;
@@ -326,10 +315,12 @@ h2 {
 }
 
 .complete-btn {
-  flex-grow:1;
+  flex-grow: 1;
 }
 
-/* HTML: <div class="ribbon">Your text content</div> */
+/* From CSS Patterns
+
+HTML: <div class="ribbon">Your text content</div> */
 .ribbon {
   font-size: 14px;
   font-weight: bold;
@@ -395,6 +386,11 @@ h2 {
 
   /* background-color: rgba(61, 70, 67, 0.9); */
   border: 2px solid var(--color-complete);
+
+  h2 {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
 }
 
 .status-area {
