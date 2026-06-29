@@ -11,15 +11,40 @@ type Task = {
   name: string;
   status: Status;
   priority: Priority;
+  createdAt: Date;
   description?: string;
   notes?: string;
 };
 
 const tasks: Task[] = [
-  { id: 1, name: "Lära oss TS", status: "pending", priority: "low" },
-  { id: 2, name: "Träna", status: "pending", priority: "high" },
-  { id: 3, name: "Handla", status: "pending", priority: "medium" },
-  { id: 4, name: "Tvätta", status: "completed", priority: "low" },
+  {
+    id: 1,
+    name: "Lära oss TS",
+    status: "pending",
+    priority: "low",
+    createdAt: new Date(),
+  },
+  {
+    id: 2,
+    name: "Träna",
+    status: "pending",
+    priority: "high",
+    createdAt: new Date(),
+  },
+  {
+    id: 3,
+    name: "Handla",
+    status: "pending",
+    priority: "medium",
+    createdAt: new Date(),
+  },
+  {
+    id: 4,
+    name: "Tvätta",
+    status: "completed",
+    priority: "low",
+    createdAt: new Date(),
+  },
   //   { id: 5, name: "Lära oss TS", status: "pending", priority: "low" },
   //   { id: 6, name: "Träna", status: "completed", priority: "high" },
   //   { id: 7, name: "Handla", status: "pending", priority: "medium" },
@@ -47,7 +72,13 @@ const capitalize = (text: string): string =>
   text.charAt(0).toUpperCase() + text.slice(1);
 
 const addTask = (taskName: string, priority: Priority = "low"): void => {
-  tasks.push({ id: nextId++, name: taskName, status: "pending", priority });
+  tasks.push({
+    id: nextId++,
+    name: taskName,
+    status: "pending",
+    priority,
+    createdAt: new Date(),
+  });
 };
 
 const toggleTask = (taskId: number): void => {
@@ -95,6 +126,9 @@ function createAddBar(): void {
 
   input.addEventListener("input", () => {
     const length = input.value.length;
+    input.required;
+    input.minLength = 3;
+    input.maxLength = 45;
     charCounter.textContent = `${length} /40`;
 
     charCounter.classList.toggle(
@@ -210,6 +244,9 @@ function renderTasks(): void {
     const title = document.createElement("h2");
     title.textContent = task.name;
 
+    const date = document.createElement("p");
+    date.textContent = task.createdAt.toLocaleDateString();
+
     const ribbon = document.createElement("div");
     ribbon.classList.add("ribbon");
     if (task.status === "completed") {
@@ -267,7 +304,7 @@ function renderTasks(): void {
     controls.classList.add("task-controls");
     controls.append(completeButton, deleteButton);
 
-    card.append(title, ribbon, status, controls);
+    card.append(title, date, ribbon, status, controls);
 
     app?.prepend(card);
   }

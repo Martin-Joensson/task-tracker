@@ -1,10 +1,34 @@
 const header = document.querySelector("#header");
 const app = document.querySelector("#task-grid");
 const tasks = [
-    { id: 1, name: "Lära oss TS", status: "pending", priority: "low" },
-    { id: 2, name: "Träna", status: "pending", priority: "high" },
-    { id: 3, name: "Handla", status: "pending", priority: "medium" },
-    { id: 4, name: "Tvätta", status: "completed", priority: "low" },
+    {
+        id: 1,
+        name: "Lära oss TS",
+        status: "pending",
+        priority: "low",
+        createdAt: new Date(),
+    },
+    {
+        id: 2,
+        name: "Träna",
+        status: "pending",
+        priority: "high",
+        createdAt: new Date(),
+    },
+    {
+        id: 3,
+        name: "Handla",
+        status: "pending",
+        priority: "medium",
+        createdAt: new Date(),
+    },
+    {
+        id: 4,
+        name: "Tvätta",
+        status: "completed",
+        priority: "low",
+        createdAt: new Date(),
+    },
     //   { id: 5, name: "Lära oss TS", status: "pending", priority: "low" },
     //   { id: 6, name: "Träna", status: "completed", priority: "high" },
     //   { id: 7, name: "Handla", status: "pending", priority: "medium" },
@@ -26,7 +50,13 @@ const procentTracker = (num1, num2) => {
 };
 const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1);
 const addTask = (taskName, priority = "low") => {
-    tasks.push({ id: nextId++, name: taskName, status: "pending", priority });
+    tasks.push({
+        id: nextId++,
+        name: taskName,
+        status: "pending",
+        priority,
+        createdAt: new Date(),
+    });
 };
 const toggleTask = (taskId) => {
     const task = tasks.find((task) => task.id === taskId);
@@ -62,6 +92,9 @@ function createAddBar() {
     charCounter.classList.add("character-message");
     input.addEventListener("input", () => {
         const length = input.value.length;
+        input.required;
+        input.minLength = 3;
+        input.maxLength = 45;
         charCounter.textContent = `${length} /40`;
         charCounter.classList.toggle("too-few-characters", length > 0 && length < 3);
         charCounter.classList.toggle("warning", length >= 35);
@@ -145,6 +178,8 @@ function renderTasks() {
         card.classList.add("card", `${task.priority}-priority`);
         const title = document.createElement("h2");
         title.textContent = task.name;
+        const date = document.createElement("p");
+        date.textContent = task.createdAt.toLocaleDateString();
         const ribbon = document.createElement("div");
         ribbon.classList.add("ribbon");
         if (task.status === "completed") {
@@ -191,7 +226,7 @@ function renderTasks() {
         const controls = document.createElement("div");
         controls.classList.add("task-controls");
         controls.append(completeButton, deleteButton);
-        card.append(title, ribbon, status, controls);
+        card.append(title, date, ribbon, status, controls);
         app?.prepend(card);
     }
 }
