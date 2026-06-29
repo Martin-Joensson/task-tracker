@@ -34,19 +34,13 @@ const toggleTask = (taskId) => {
         return;
     task.status = task.status === "pending" ? "completed" : "pending";
 };
-const makeSure = (taskId) => {
-    const task = tasks.find((task) => task.id === taskId);
-    if (!task)
-        return;
-    task.status = task.status === "pending" ? "completed" : "pending";
-};
 const deleteTask = (taskId) => {
     const index = tasks.findIndex((task) => task.id === taskId);
     if (index !== -1) {
         tasks.splice(index, 1);
     }
 };
-function renderHeader() {
+function createHeader() {
     if (header) {
         header.innerHTML = "";
     }
@@ -54,38 +48,57 @@ function renderHeader() {
     title.textContent = "用 Tasuku";
     header?.append(title);
 }
-const addBar = document.createElement("div");
-addBar.classList.add("add-area");
-const addTitle = document.createElement("h2");
-addTitle.textContent = "Add tasks";
-const form = document.createElement("form");
-form.classList.add("add-form");
-const input = document.createElement("input");
-input.type = "text";
-input.placeholder = "New task";
-const select = document.createElement("select");
-const priorities = ["low", "medium", "high"];
-for (const priority of priorities) {
-    const option = document.createElement("option");
-    option.value = priority;
-    option.textContent = capitalize(priority);
-    select.append(option);
+function createAddBar() {
+    const addBar = document.createElement("div");
+    addBar.classList.add("add-area");
+    const addTitle = document.createElement("h2");
+    addTitle.textContent = "Add tasks";
+    const form = document.createElement("form");
+    form.classList.add("add-form");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "New task";
+    const charCounter = document.createElement("p");
+    charCounter.classList.add("character-message");
+    input.addEventListener("input", () => {
+        const length = input.value.length;
+        charCounter.textContent = `${length} /40`;
+        charCounter.classList.toggle("too-few-characters", length > 0 && length < 3);
+        charCounter.classList.toggle("warning", length >= 35);
+        charCounter.classList.toggle("too-many-characters", length > 40);
+    });
+    const select = document.createElement("select");
+    const priorities = ["low", "medium", "high"];
+    for (const priority of priorities) {
+        const option = document.createElement("option");
+        option.value = priority;
+        option.textContent = capitalize(priority);
+        select.append(option);
+    }
+    const addButton = document.createElement("button");
+    addButton.type = "submit";
+    addButton.textContent = "Add Task";
+    const errorMessage = document.createElement("p");
+    errorMessage.classList.add("error-message");
+    errorMessage.textContent = "";
+    console.log(errorMessage);
+    form.append(addTitle, input, charCounter, errorMessage, select, addButton);
+    // Put the form above the task grid
+    app?.before(form);
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const taskName = input.value.trim();
+        const error = validateTaskName(taskName);
+        charCounter.textContent = `${input.value.length} /40`;
+        if (error !== "") {
+            errorMessage.textContent = error;
+            return;
+        }
+        addTask(taskName, select.value);
+        input.value = "";
+        updateUI();
+    });
 }
-const addButton = document.createElement("button");
-addButton.type = "submit";
-addButton.textContent = "Add Task";
-form.append(addTitle, input, select, addButton);
-// Put the form above the task grid
-app?.before(form);
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const taskName = input.value.trim();
-    if (!taskName)
-        return;
-    addTask(taskName, select.value);
-    input.value = "";
-    updateUI();
-});
 const statusBar = document.createElement("div");
 statusBar.classList.add("status-area");
 function renderStatusBar() {
@@ -111,6 +124,18 @@ function updateUI() {
     renderStatusBar();
     renderTasks();
 }
+function validateTaskName(name) {
+    if (name === "") {
+        return "Task name is required.";
+    }
+    if (name.length < 3) {
+        return "Task name needs to be larger than 3 characters.";
+    }
+    if (name.length > 40) {
+        return "Task can't be longer than 40 characters";
+    }
+    return "";
+}
 function renderTasks() {
     if (app) {
         app.innerHTML = "";
@@ -131,7 +156,7 @@ function renderTasks() {
             ribbon.textContent = task.priority;
         }
         const status = document.createElement("p");
-        //   status.textContent = `Status: ${capitalize(task.status)}`;
+        // status.textContent = `Status: ${capitalize(task.status)}`;
         status.classList.add(task.status);
         // const priority = document.createElement("p");
         // priority.textContent = `Priority: ${capitalize(task.priority)}`;
@@ -170,7 +195,8 @@ function renderTasks() {
         app?.prepend(card);
     }
 }
-renderHeader();
+createHeader();
+createAddBar();
 renderStatusBar();
 renderTasks();
 export {};

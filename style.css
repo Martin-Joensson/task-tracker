@@ -113,7 +113,7 @@ html {
   color-scheme: light dark;
 
   /* From CSS Patterns*/
-  --s: 100px; /* control the size*/
+  /* --s: 150px; 
   --c1: var(--gray-400, white);
   --c2: var(--gray-700, white);
 
@@ -137,7 +137,7 @@ html {
         var(--c1) 96%
       )
       var(--c1);
-  background-size: var(--s) var(--s);
+  background-size: var(--s) var(--s); */
 }
 
 /*** Global/base styles ***/
@@ -327,7 +327,7 @@ HTML: <div class="ribbon">Your text content</div> */
   color: #fff;
 }
 .ribbon {
-  --f: 0.5em; /* control the folded part */
+  --f: 0.2em; /* control the folded part */
   --_color-priority: var(--color-priority, var(--color-high));
   position: absolute;
   top: 0;
@@ -428,4 +428,22 @@ form {
 
 .status {
   display: none;
+}
+
+.error-message {
+  margin-block-start: 0;
+  padding-block-start: 0;
+  font-size: 0.8rem;
+  color: red;
+}
+
+.character-message {
+  color: white;
+}
+.warning {
+  color: orange;
+}
+.too-few-characters,
+.too-many-characters {
+  color: red;
 }

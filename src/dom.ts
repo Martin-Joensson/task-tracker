@@ -89,6 +89,23 @@ function createAddBar(): void {
   input.type = "text";
   input.placeholder = "New task";
 
+  const charCounter = document.createElement("p");
+
+  charCounter.classList.add("character-message");
+
+  input.addEventListener("input", () => {
+    const length = input.value.length;
+    charCounter.textContent = `${length} /40`;
+
+    charCounter.classList.toggle(
+      "too-few-characters",
+      length > 0 && length < 3,
+    );
+    charCounter.classList.toggle("warning", length >= 35);
+
+    charCounter.classList.toggle("too-many-characters", length > 40);
+  });
+
   const select = document.createElement("select");
 
   const priorities: Priority[] = ["low", "medium", "high"];
@@ -104,7 +121,13 @@ function createAddBar(): void {
   addButton.type = "submit";
   addButton.textContent = "Add Task";
 
-  form.append(addTitle, input, select, addButton);
+  const errorMessage = document.createElement("p");
+  errorMessage.classList.add("error-message");
+  errorMessage.textContent = "";
+
+  console.log(errorMessage);
+
+  form.append(addTitle, input, charCounter, errorMessage, select, addButton);
 
   // Put the form above the task grid
   app?.before(form);
@@ -113,8 +136,13 @@ function createAddBar(): void {
     event.preventDefault();
 
     const taskName = input.value.trim();
+    const error = validateTaskName(taskName);
+    charCounter.textContent = `${input.value.length} /40`;
 
-    if (!taskName) return;
+    if (error !== "") {
+      errorMessage.textContent = error;
+      return;
+    }
 
     addTask(taskName, select.value as Priority);
 
@@ -154,6 +182,22 @@ function updateUI(): void {
   renderTasks();
 }
 
+function validateTaskName(name: string): string {
+  if (name === "") {
+    return "Task name is required.";
+  }
+
+  if (name.length < 3) {
+    return "Task name needs to be larger than 3 characters.";
+  }
+
+  if (name.length > 40) {
+    return "Task can't be longer than 40 characters";
+  }
+
+  return "";
+}
+
 function renderTasks(): void {
   if (app) {
     app.innerHTML = "";
@@ -178,7 +222,7 @@ function renderTasks(): void {
     }
 
     const status = document.createElement("p");
-    //   status.textContent = `Status: ${capitalize(task.status)}`;
+    // status.textContent = `Status: ${capitalize(task.status)}`;
     status.classList.add(task.status);
 
     // const priority = document.createElement("p");
