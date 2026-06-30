@@ -62,27 +62,39 @@ const procentTracker = (num1, num2) => {
 const capitalize = (text) => {
     return text.charAt(0).toUpperCase() + text.slice(1);
 };
-const saveTasks = () => {
+const saveToStorage = () => {
     const lastSave = new Date();
     const json = JSON.stringify(tasks);
+    const settings = {
+        sort: currentSort,
+        priorityFilter: currentPriorityFilter,
+        statusFilter: currentStatusFilter,
+    };
     localStorage.setItem("tasks", json);
     localStorage.setItem("lastSaved", lastSave.toLocaleString());
+    localStorage.setItem("settings", JSON.stringify(settings));
 };
-const loadTasks = () => {
-    const json = localStorage.getItem("tasks");
-    if (json === null) {
-        return;
+const loadFromStorage = () => {
+    const taskJson = localStorage.getItem("tasks");
+    if (taskJson) {
+        const parsed = JSON.parse(taskJson);
+        tasks = parsed.map((task) => ({
+            ...task,
+            createdAt: new Date(task.createdAt),
+        }));
+        nextId = tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
     }
-    const parsed = JSON.parse(json);
-    tasks = parsed.map((task) => ({
-        ...task,
-        createdAt: new Date(task.createdAt),
-    }));
-    nextId = tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
+    const settingsJson = localStorage.getItem("settings");
+    if (settingsJson) {
+        const settings = JSON.parse(settingsJson);
+        currentSort = settings.sort;
+        currentPriorityFilter = settings.priorityFilter;
+        currentStatusFilter = settings.statusFilter;
+    }
 };
 const clearTasks = () => {
     tasks = [];
-    saveTasks();
+    saveToStorage();
     nextId = 1;
 };
 const addTask = (taskName, priority = "low") => {
@@ -93,21 +105,21 @@ const addTask = (taskName, priority = "low") => {
         priority,
         createdAt: new Date(),
     });
-    saveTasks();
+    saveToStorage();
 };
 const toggleTask = (taskId) => {
     const task = tasks.find((task) => task.id === taskId);
     if (!task)
         return;
     task.status = task.status === "pending" ? "completed" : "pending";
-    saveTasks();
+    saveToStorage();
 };
 const deleteTask = (taskId) => {
     const index = tasks.findIndex((task) => task.id === taskId);
     if (index !== -1) {
         tasks.splice(index, 1);
     }
-    saveTasks();
+    saveToStorage();
 };
 function createSortSelection() {
     const sortSelect = document.createElement("select");
@@ -118,8 +130,10 @@ function createSortSelection() {
     <option value="priority">Priority</option>
     <option value="alphabetical">Alphabetical</option>
 `;
+    sortSelect.value = currentSort;
     sortSelect.addEventListener("change", () => {
         currentSort = sortSelect.value;
+        saveToStorage();
         updateUI();
     });
     return sortSelect;
@@ -133,8 +147,10 @@ function createPrioritySelection() {
     <option value="medium">Medium</option>
     <option value="low">Low</option>
 `;
+    prioritySelect.value = currentPriorityFilter;
     prioritySelect.addEventListener("change", () => {
         currentPriorityFilter = prioritySelect.value;
+        saveToStorage();
         updateUI();
     });
     return prioritySelect;
@@ -315,7 +331,7 @@ function updateUI() {
     renderTasks();
     renderFooter();
 }
-loadTasks();
+loadFromStorage();
 createHeader();
 createAddBar();
 createFooter();
