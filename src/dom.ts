@@ -1,5 +1,5 @@
 const header = document.querySelector<HTMLElement>("#header");
-const app = document.querySelector<HTMLDivElement>("#task-grid");
+const taskGrid = document.querySelector<HTMLDivElement>("#task-grid");
 const footer = document.querySelector<HTMLDivElement>("#footer");
 
 // const title = document.querySelector<HTMLHeadingElement>("#title");
@@ -105,7 +105,6 @@ const clearTasks = () => {
   tasks = [];
   saveTasks();
   nextId = 1;
-  updateUI();
 };
 
 const addTask = (taskName: string, priority: Priority = "low"): void => {
@@ -204,7 +203,7 @@ function createAddBar(): void {
   form.append(addTitle, input, charCounter, errorMessage, select, addButton);
 
   // Put the form above the task grid
-  app?.before(form);
+  taskGrid?.before(form);
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -248,7 +247,7 @@ function renderStatusBar(): void {
     <p> Procent complete: ${procentTracker(completedTasks.length, tasks.length)}%</p>
     </div>
     `;
-  app?.before(statusBar);
+  taskGrid?.before(statusBar);
 }
 
 function validateTaskName(name: string): string {
@@ -267,87 +266,88 @@ function validateTaskName(name: string): string {
   return "";
 }
 
+function createTaskCard(task: Task): HTMLElement {
+  const card = document.createElement("article");
+  card.classList.add("card", `${task.priority}-priority`);
+
+  const title = document.createElement("h2");
+  title.textContent = task.name;
+
+  const date = document.createElement("p");
+  date.textContent = task.createdAt.toLocaleDateString();
+
+  const ribbon = document.createElement("div");
+  ribbon.classList.add("ribbon");
+  if (task.status === "completed") {
+    ribbon.textContent = task.status;
+    ribbon.classList.add("ribbon-complete");
+  }
+  ribbon.classList.add("ribbon");
+  if (task.status === "pending") {
+    ribbon.textContent = task.priority;
+  }
+
+  const status = document.createElement("p");
+  // status.textContent = `Status: ${capitalize(task.status)}`;
+  status.classList.add(task.status);
+
+  // const priority = document.createElement("p");
+  // priority.textContent = `Priority: ${capitalize(task.priority)}`;
+
+  const completeButton = document.createElement("button");
+  completeButton.classList.add("btn", "complete-btn");
+
+  completeButton.textContent = task.status === "pending" ? "Complete" : "Undo";
+
+  completeButton.addEventListener("click", () => {
+    toggleTask(task.id);
+    updateUI();
+  });
+
+  const deleteButton = document.createElement("button");
+  deleteButton.classList.add("btn", "delete-btn");
+  deleteButton.textContent = `Delete`;
+
+  deleteButton.addEventListener("click", () => {
+    if (deleteButton.textContent === "Delete") {
+      deleteButton.textContent = "Sure?";
+      completeButton.textContent = "No!";
+      console.log("Sure?");
+      return;
+    }
+
+    if (deleteButton.textContent === "Sure?") {
+      deleteButton.textContent = "Delete";
+
+      deleteTask(task.id);
+    }
+    updateUI();
+  });
+
+  const controls = document.createElement("div");
+  controls.classList.add("task-controls");
+  controls.append(completeButton, deleteButton);
+
+  card.append(title, date, ribbon, status, controls);
+
+  //  app?.prepend(card);
+
+  return card;
+}
+
 function renderTasks(): void {
-  if (app) {
-    app.innerHTML = "";
+  if (taskGrid) {
+    taskGrid.innerHTML = "";
   }
 
   if (tasks.length === 0) {
     const noTasks = document.createElement("p");
     noTasks.textContent = "No tasks yet.";
-    app?.append(noTasks);
+    taskGrid?.append(noTasks);
   }
 
   for (const task of tasks) {
-    const card = document.createElement("article");
-    card.classList.add("card", `${task.priority}-priority`);
-
-    const title = document.createElement("h2");
-    title.textContent = task.name;
-
-    const date = document.createElement("p");
-    date.textContent = task.createdAt.toLocaleDateString();
-
-    const ribbon = document.createElement("div");
-    ribbon.classList.add("ribbon");
-    if (task.status === "completed") {
-      ribbon.textContent = task.status;
-      ribbon.classList.add("ribbon-complete");
-    }
-    ribbon.classList.add("ribbon");
-    if (task.status === "pending") {
-      ribbon.textContent = task.priority;
-    }
-
-    const status = document.createElement("p");
-    // status.textContent = `Status: ${capitalize(task.status)}`;
-    status.classList.add(task.status);
-
-    // const priority = document.createElement("p");
-    // priority.textContent = `Priority: ${capitalize(task.priority)}`;
-
-    const completeButton = document.createElement("button");
-    completeButton.classList.add("btn", "complete-btn");
-    if (task.status === "pending") {
-      completeButton.textContent = "Complete";
-    }
-
-    if (task.status === "completed") {
-      completeButton.textContent = "Undo";
-    }
-
-    completeButton.addEventListener("click", () => {
-      toggleTask(task.id);
-      updateUI();
-    });
-
-    const deleteButton = document.createElement("button");
-    deleteButton.classList.add("btn", "delete-btn");
-    deleteButton.textContent = `Delete`;
-
-    deleteButton.addEventListener("click", () => {
-      if (deleteButton.textContent === "Delete") {
-        deleteButton.textContent = "Sure?";
-        completeButton.textContent = "No!";
-        console.log("Sure?");
-        return;
-      }
-
-      if (deleteButton.textContent === "Sure?") {
-        deleteButton.textContent = "Delete";
-
-        deleteTask(task.id);
-      }
-      updateUI();
-    });
-
-    const controls = document.createElement("div");
-    controls.classList.add("task-controls");
-    controls.append(completeButton, deleteButton);
-
-    card.append(title, date, ribbon, status, controls);
-
-    app?.prepend(card);
+    taskGrid?.append(createTaskCard(task));
   }
 }
 
@@ -362,14 +362,13 @@ const createFooter = () => {
   clearAllButton.textContent = " DELETE ALL TASKS";
   clearAllButton.addEventListener("click", () => {
     clearTasks();
+    updateUI();
   });
 
   const lastSave = document.createElement("p");
- 
+
   lastSave.textContent = `Last save to local storage: ${localStorage.getItem("lastSaved")}
 `;
-  
- 
 
   footerContainer?.append(lastSave, clearAllButton);
 };
