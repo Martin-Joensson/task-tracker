@@ -2,7 +2,17 @@ const header = document.querySelector<HTMLElement>("#header");
 const taskGrid = document.querySelector<HTMLDivElement>("#task-grid");
 const footer = document.querySelector<HTMLDivElement>("#footer");
 
-// const title = document.querySelector<HTMLHeadingElement>("#title");
+const statusBar = document.createElement("div");
+statusBar.classList.add("status-area");
+
+const footerContainer = document.createElement("div");
+footerContainer.classList.add("footer", "content-grid");
+
+const clearAllButton = document.createElement("button");
+clearAllButton.classList.add("btn", "clear-all-button");
+clearAllButton.textContent = " DELETE ALL TASKS";
+
+const lastSave = document.createElement("p");
 
 type Priority = "low" | "medium" | "high";
 type Status = "pending" | "completed";
@@ -17,50 +27,58 @@ type Task = {
   notes?: string;
 };
 
-let tasks: Task[] = [
-  {
-    id: 1,
-    name: "Lära oss TS",
-    status: "pending",
-    priority: "low",
-    createdAt: new Date(),
-  },
-  {
-    id: 2,
-    name: "Träna",
-    status: "pending",
-    priority: "high",
-    createdAt: new Date(),
-  },
-  {
-    id: 3,
-    name: "Handla",
-    status: "pending",
-    priority: "medium",
-    createdAt: new Date(),
-  },
-  {
-    id: 4,
-    name: "Tvätta",
-    status: "completed",
-    priority: "low",
-    createdAt: new Date(),
-  },
-  //   { id: 5, name: "Lära oss TS", status: "pending", priority: "low" },
-  //   { id: 6, name: "Träna", status: "completed", priority: "high" },
-  //   { id: 7, name: "Handla", status: "pending", priority: "medium" },
-  //   { id: 8, name: "Tvätta", status: "completed", priority: "low" },
-  //   { id: 9, name: "Lära oss TS", status: "pending", priority: "low" },
-  //   { id: 10, name: "Träna", status: "completed", priority: "high" },
-  //   { id: 11, name: "Handla", status: "pending", priority: "medium" },
-  //   { id: 12, name: "Tvätta", status: "completed", priority: "low" },
-];
+let tasks: Task[] = [];
+
+type SortBy = "created-newest" | "created-oldest" | "priority" | "alphabetical";
+
+let currentPriorityFilter: Priority | "all" = "all";
+let currentStatusFilter: Status | "all" = "all";
+let currentSort: SortBy = "created-newest";
 
 let nextId = tasks.length + 1;
+
+function getVisibleTasks(): Task[] {
+  let visible = [...tasks];
+
+  // Filtering
+  if (currentPriorityFilter !== "all") {
+    visible = visible.filter((task) => task.priority === currentPriorityFilter);
+  }
+
+  if (currentStatusFilter !== "all") {
+    visible = visible.filter((task) => task.status === currentStatusFilter);
+  }
+
+  // Sorting
+  switch (currentSort) {
+    case "created-newest":
+      visible.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      break;
+
+    case "created-oldest":
+      visible.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      break;
+
+    case "alphabetical":
+      visible.sort((a, b) => a.name.localeCompare(b.name));
+      break;
+
+    case "priority":
+      const order = {
+        high: 3,
+        medium: 2,
+        low: 1,
+      };
+      visible.sort((a, b) => order[b.priority] - order[a.priority]);
+      break;
+  }
+  return visible;
+}
 
 const getStatusTasks = (status: Status): Task[] => {
   return tasks.filter((tasks) => tasks.status === status);
 };
+
 const getPriorityTasks = (priority: Priority): Task[] => {
   return tasks.filter((tasks) => tasks.priority === priority);
 };
@@ -75,17 +93,18 @@ const procentTracker = (num1: number, num2: number) => {
   }
 };
 
-const capitalize = (text: string): string =>
-  text.charAt(0).toUpperCase() + text.slice(1);
+const capitalize = (text: string): string => {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+};
 
-const saveTasks = () => {
+const saveTasks = (): void => {
   const lastSave = new Date();
   const json = JSON.stringify(tasks);
   localStorage.setItem("tasks", json);
-  localStorage.setItem("lastSaved", lastSave.toDateString());
+  localStorage.setItem("lastSaved", lastSave.toLocaleString());
 };
 
-const loadTasks = () => {
+const loadTasks = (): void => {
   const json = localStorage.getItem("tasks");
 
   if (json === null) {
@@ -101,7 +120,7 @@ const loadTasks = () => {
   nextId = tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
 };
 
-const clearTasks = () => {
+const clearTasks = (): void => {
   tasks = [];
   saveTasks();
   nextId = 1;
@@ -143,7 +162,36 @@ function createHeader(): void {
   const title = document.createElement("h1");
   title.textContent = "用 Tasuku";
 
-  header?.append(title);
+  const sortSelect = document.createElement("select");
+  sortSelect.innerHTML = `
+
+    <option value="created-newest">Newest</option>
+    <option value="created-oldest">Oldest</option>
+    <option value="priority">Priority</option>
+    <option value="alphabetical">Alphabetical</option>
+`;
+
+  sortSelect.addEventListener("change", () => {
+    currentSort = sortSelect.value as SortBy;
+    updateUI();
+  });
+
+  const prioritySelect = document.createElement("select");
+  prioritySelect.innerHTML = `
+
+    <option value="all">All</option>
+    <option value="high">High</option>
+    <option value="medium">Medium</option>
+    <option value="low">Low</option>
+`;
+  
+  prioritySelect.addEventListener("change", () => {
+    currentPriorityFilter = prioritySelect.value as Priority | "all";
+
+    updateUI();
+  });
+
+  header?.append(title, sortSelect, prioritySelect);
 }
 
 function createAddBar(): void {
@@ -224,9 +272,6 @@ function createAddBar(): void {
     updateUI();
   });
 }
-
-const statusBar = document.createElement("div");
-statusBar.classList.add("status-area");
 
 function renderStatusBar(): void {
   const completedTasks = getStatusTasks("completed");
@@ -346,41 +391,35 @@ function renderTasks(): void {
     taskGrid?.append(noTasks);
   }
 
-  for (const task of tasks) {
+  for (const task of getVisibleTasks()) {
     taskGrid?.append(createTaskCard(task));
   }
 }
 
-const createFooter = () => {
-  const footerContainer = document.createElement("div");
-  footerContainer.classList.add("footer", "content-grid");
-
-  footer?.append(footerContainer);
-
-  const clearAllButton = document.createElement("button");
-  clearAllButton.classList.add("btn", "clear-all-button");
-  clearAllButton.textContent = " DELETE ALL TASKS";
+function createFooter(): void {
   clearAllButton.addEventListener("click", () => {
     clearTasks();
     updateUI();
   });
 
-  const lastSave = document.createElement("p");
+  footerContainer.append(lastSave, clearAllButton);
+  footer?.append(footerContainer);
+  renderFooter();
+}
 
+function renderFooter(): void {
   lastSave.textContent = `Last save to local storage: ${localStorage.getItem("lastSaved")}
 `;
-
-  footerContainer?.append(lastSave, clearAllButton);
-};
+}
 
 function updateUI(): void {
   renderStatusBar();
   renderTasks();
+  renderFooter();
 }
 
 loadTasks();
 createHeader();
 createAddBar();
 createFooter();
-renderStatusBar();
-renderTasks();
+updateUI();
