@@ -1,5 +1,6 @@
 const header = document.querySelector("#header");
 const app = document.querySelector("#task-grid");
+const footer = document.querySelector("#footer");
 let tasks = [
     {
         id: 1,
@@ -55,8 +56,10 @@ const procentTracker = (num1, num2) => {
 };
 const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1);
 const saveTasks = () => {
+    const lastSave = new Date();
     const json = JSON.stringify(tasks);
     localStorage.setItem("tasks", json);
+    localStorage.setItem("lastSaved", lastSave.toDateString());
 };
 const loadTasks = () => {
     const json = localStorage.getItem("tasks");
@@ -69,6 +72,12 @@ const loadTasks = () => {
         createdAt: new Date(task.createdAt),
     }));
     nextId = tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
+};
+const clearTasks = () => {
+    tasks = [];
+    saveTasks();
+    nextId = 1;
+    updateUI();
 };
 const addTask = (taskName, priority = "low") => {
     tasks.push({
@@ -177,10 +186,6 @@ function renderStatusBar() {
     `;
     app?.before(statusBar);
 }
-function updateUI() {
-    renderStatusBar();
-    renderTasks();
-}
 function validateTaskName(name) {
     if (name === "") {
         return "Task name is required.";
@@ -259,9 +264,29 @@ function renderTasks() {
         app?.prepend(card);
     }
 }
+const createFooter = () => {
+    const footerContainer = document.createElement("div");
+    footerContainer.classList.add("footer", "content-grid");
+    footer?.append(footerContainer);
+    const clearAllButton = document.createElement("button");
+    clearAllButton.classList.add("btn", "clear-all-button");
+    clearAllButton.textContent = " DELETE ALL TASKS";
+    clearAllButton.addEventListener("click", () => {
+        clearTasks();
+    });
+    const lastSave = document.createElement("p");
+    lastSave.textContent = `Last save to local storage: ${localStorage.getItem("lastSaved")}
+`;
+    footerContainer?.append(lastSave, clearAllButton);
+};
+function updateUI() {
+    renderStatusBar();
+    renderTasks();
+}
 loadTasks();
 createHeader();
 createAddBar();
+createFooter();
 renderStatusBar();
 renderTasks();
 export {};

@@ -1,5 +1,6 @@
 const header = document.querySelector<HTMLElement>("#header");
 const app = document.querySelector<HTMLDivElement>("#task-grid");
+const footer = document.querySelector<HTMLDivElement>("#footer");
 
 // const title = document.querySelector<HTMLHeadingElement>("#title");
 
@@ -66,7 +67,6 @@ const getPriorityTasks = (priority: Priority): Task[] => {
 
 const procentTracker = (num1: number, num2: number) => {
   if (num1 && num2) {
-    
     return ((num1 / num2) * 100).toFixed(2);
   }
 
@@ -79,8 +79,10 @@ const capitalize = (text: string): string =>
   text.charAt(0).toUpperCase() + text.slice(1);
 
 const saveTasks = () => {
+  const lastSave = new Date();
   const json = JSON.stringify(tasks);
   localStorage.setItem("tasks", json);
+  localStorage.setItem("lastSaved", lastSave.toDateString());
 };
 
 const loadTasks = () => {
@@ -96,9 +98,14 @@ const loadTasks = () => {
     createdAt: new Date(task.createdAt),
   }));
 
-
-
   nextId = tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
+};
+
+const clearTasks = () => {
+  tasks = [];
+  saveTasks();
+  nextId = 1;
+  updateUI();
 };
 
 const addTask = (taskName: string, priority: Priority = "low"): void => {
@@ -244,11 +251,6 @@ function renderStatusBar(): void {
   app?.before(statusBar);
 }
 
-function updateUI(): void {
-  renderStatusBar();
-  renderTasks();
-}
-
 function validateTaskName(name: string): string {
   if (name === "") {
     return "Task name is required.";
@@ -270,11 +272,11 @@ function renderTasks(): void {
     app.innerHTML = "";
   }
 
-    if (tasks.length === 0) {
-      const noTasks = document.createElement("p");
-      noTasks.textContent = "No tasks yet.";
-      app?.append(noTasks);
-    }
+  if (tasks.length === 0) {
+    const noTasks = document.createElement("p");
+    noTasks.textContent = "No tasks yet.";
+    app?.append(noTasks);
+  }
 
   for (const task of tasks) {
     const card = document.createElement("article");
@@ -349,8 +351,37 @@ function renderTasks(): void {
   }
 }
 
+const createFooter = () => {
+  const footerContainer = document.createElement("div");
+  footerContainer.classList.add("footer", "content-grid");
+
+  footer?.append(footerContainer);
+
+  const clearAllButton = document.createElement("button");
+  clearAllButton.classList.add("btn", "clear-all-button");
+  clearAllButton.textContent = " DELETE ALL TASKS";
+  clearAllButton.addEventListener("click", () => {
+    clearTasks();
+  });
+
+  const lastSave = document.createElement("p");
+ 
+  lastSave.textContent = `Last save to local storage: ${localStorage.getItem("lastSaved")}
+`;
+  
+ 
+
+  footerContainer?.append(lastSave, clearAllButton);
+};
+
+function updateUI(): void {
+  renderStatusBar();
+  renderTasks();
+}
+
 loadTasks();
 createHeader();
 createAddBar();
+createFooter();
 renderStatusBar();
 renderTasks();

@@ -447,3 +447,18 @@ form {
 .too-many-characters {
   color: red;
 }
+
+#footer {
+
+  bottom: 0;
+  padding-block: 2rem;
+}
+
+.clear-all-button {
+  background: rgba(255, 10, 10, 0.5);
+  color: white;
+
+  &::hover. &::focus-visible {
+    background: rgba(255, 10, 10, 0.7);
+  }
+}
