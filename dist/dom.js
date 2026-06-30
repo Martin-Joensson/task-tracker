@@ -46,7 +46,12 @@ const getPriorityTasks = (priority) => {
     return tasks.filter((tasks) => tasks.priority === priority);
 };
 const procentTracker = (num1, num2) => {
-    return ((num1 / num2) * 100).toFixed(2);
+    if (num1 && num2) {
+        return ((num1 / num2) * 100).toFixed(2);
+    }
+    if (!num1 || !num2) {
+        return 0;
+    }
 };
 const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1);
 const saveTasks = () => {
@@ -63,6 +68,7 @@ const loadTasks = () => {
         ...task,
         createdAt: new Date(task.createdAt),
     }));
+    nextId = tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
 };
 const addTask = (taskName, priority = "low") => {
     tasks.push({
@@ -190,6 +196,11 @@ function validateTaskName(name) {
 function renderTasks() {
     if (app) {
         app.innerHTML = "";
+    }
+    if (tasks.length === 0) {
+        const noTasks = document.createElement("p");
+        noTasks.textContent = "No tasks yet.";
+        app?.append(noTasks);
     }
     for (const task of tasks) {
         const card = document.createElement("article");
