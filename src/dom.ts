@@ -155,13 +155,7 @@ const deleteTask = (taskId: number): void => {
   saveTasks();
 };
 
-function createHeader(): void {
-  if (header) {
-    header.innerHTML = "";
-  }
-  const title = document.createElement("h1");
-  title.textContent = "用 Tasuku";
-
+function createSortSelection(): HTMLElement {
   const sortSelect = document.createElement("select");
   sortSelect.innerHTML = `
 
@@ -176,7 +170,12 @@ function createHeader(): void {
     updateUI();
   });
 
+  return sortSelect;
+}
+
+function createPrioritySelection(): HTMLElement {
   const prioritySelect = document.createElement("select");
+
   prioritySelect.innerHTML = `
 
     <option value="all">All</option>
@@ -184,14 +183,23 @@ function createHeader(): void {
     <option value="medium">Medium</option>
     <option value="low">Low</option>
 `;
-  
+
   prioritySelect.addEventListener("change", () => {
     currentPriorityFilter = prioritySelect.value as Priority | "all";
-
     updateUI();
   });
 
-  header?.append(title, sortSelect, prioritySelect);
+  return prioritySelect;
+}
+
+function createHeader(): void {
+  if (header) {
+    header.innerHTML = "";
+  }
+  const title = document.createElement("h1");
+  title.textContent = "用 Tasuku";
+
+  header?.append(title, createSortSelection(), createPrioritySelection());
 }
 
 function createAddBar(): void {

@@ -109,12 +109,7 @@ const deleteTask = (taskId) => {
     }
     saveTasks();
 };
-function createHeader() {
-    if (header) {
-        header.innerHTML = "";
-    }
-    const title = document.createElement("h1");
-    title.textContent = "用 Tasuku";
+function createSortSelection() {
     const sortSelect = document.createElement("select");
     sortSelect.innerHTML = `
 
@@ -127,6 +122,9 @@ function createHeader() {
         currentSort = sortSelect.value;
         updateUI();
     });
+    return sortSelect;
+}
+function createPrioritySelection() {
     const prioritySelect = document.createElement("select");
     prioritySelect.innerHTML = `
 
@@ -139,7 +137,15 @@ function createHeader() {
         currentPriorityFilter = prioritySelect.value;
         updateUI();
     });
-    header?.append(title, sortSelect, prioritySelect);
+    return prioritySelect;
+}
+function createHeader() {
+    if (header) {
+        header.innerHTML = "";
+    }
+    const title = document.createElement("h1");
+    title.textContent = "用 Tasuku";
+    header?.append(title, createSortSelection(), createPrioritySelection());
 }
 function createAddBar() {
     const addBar = document.createElement("div");
