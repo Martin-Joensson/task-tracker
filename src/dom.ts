@@ -16,7 +16,7 @@ type Task = {
   notes?: string;
 };
 
-const tasks: Task[] = [
+let tasks: Task[] = [
   {
     id: 1,
     name: "Lära oss TS",
@@ -71,6 +71,25 @@ const procentTracker = (num1: number, num2: number) => {
 const capitalize = (text: string): string =>
   text.charAt(0).toUpperCase() + text.slice(1);
 
+const saveTasks = () => {
+  const json = JSON.stringify(tasks);
+  localStorage.setItem("tasks", json);
+};
+
+const loadTasks = () => {
+  const json = localStorage.getItem("tasks");
+
+  if (json === null) {
+    return;
+  }
+
+  const parsed = JSON.parse(json);
+  tasks = parsed.map((task: Task) => ({
+    ...task,
+    createdAt: new Date(task.createdAt),
+  }));
+};
+
 const addTask = (taskName: string, priority: Priority = "low"): void => {
   tasks.push({
     id: nextId++,
@@ -79,6 +98,7 @@ const addTask = (taskName: string, priority: Priority = "low"): void => {
     priority,
     createdAt: new Date(),
   });
+  saveTasks();
 };
 
 const toggleTask = (taskId: number): void => {
@@ -87,6 +107,7 @@ const toggleTask = (taskId: number): void => {
   if (!task) return;
 
   task.status = task.status === "pending" ? "completed" : "pending";
+  saveTasks();
 };
 
 const deleteTask = (taskId: number): void => {
@@ -95,6 +116,7 @@ const deleteTask = (taskId: number): void => {
   if (index !== -1) {
     tasks.splice(index, 1);
   }
+  saveTasks();
 };
 
 function createHeader(): void {
@@ -310,6 +332,7 @@ function renderTasks(): void {
   }
 }
 
+loadTasks();
 createHeader();
 createAddBar();
 renderStatusBar();

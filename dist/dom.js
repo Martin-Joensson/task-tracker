@@ -1,6 +1,6 @@
 const header = document.querySelector("#header");
 const app = document.querySelector("#task-grid");
-const tasks = [
+let tasks = [
     {
         id: 1,
         name: "Lära oss TS",
@@ -49,6 +49,21 @@ const procentTracker = (num1, num2) => {
     return ((num1 / num2) * 100).toFixed(2);
 };
 const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1);
+const saveTasks = () => {
+    const json = JSON.stringify(tasks);
+    localStorage.setItem("tasks", json);
+};
+const loadTasks = () => {
+    const json = localStorage.getItem("tasks");
+    if (json === null) {
+        return;
+    }
+    const parsed = JSON.parse(json);
+    tasks = parsed.map((task) => ({
+        ...task,
+        createdAt: new Date(task.createdAt),
+    }));
+};
 const addTask = (taskName, priority = "low") => {
     tasks.push({
         id: nextId++,
@@ -57,18 +72,21 @@ const addTask = (taskName, priority = "low") => {
         priority,
         createdAt: new Date(),
     });
+    saveTasks();
 };
 const toggleTask = (taskId) => {
     const task = tasks.find((task) => task.id === taskId);
     if (!task)
         return;
     task.status = task.status === "pending" ? "completed" : "pending";
+    saveTasks();
 };
 const deleteTask = (taskId) => {
     const index = tasks.findIndex((task) => task.id === taskId);
     if (index !== -1) {
         tasks.splice(index, 1);
     }
+    saveTasks();
 };
 function createHeader() {
     if (header) {
@@ -230,6 +248,7 @@ function renderTasks() {
         app?.prepend(card);
     }
 }
+loadTasks();
 createHeader();
 createAddBar();
 renderStatusBar();
