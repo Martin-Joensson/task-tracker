@@ -1,3 +1,4 @@
+import { saveToStorage } from "./storage.js";
 let tasks = [];
 let currentSort = "created-newest";
 let currentPriorityFilter = "all";
@@ -34,22 +35,26 @@ export const addTask = (taskName, priority = "low") => {
         priority,
         createdAt: new Date(),
     });
+    saveToStorage(tasks, getSettings());
 };
 export const toggleTask = (taskId) => {
     const task = tasks.find((task) => task.id === taskId);
     if (!task)
         return;
     task.status = task.status === "pending" ? "completed" : "pending";
+    saveToStorage(tasks, getSettings());
 };
 export const deleteTask = (taskId) => {
     const index = tasks.findIndex((task) => task.id === taskId);
     if (index !== -1) {
         tasks.splice(index, 1);
     }
+    saveToStorage(tasks, getSettings());
 };
 export const clearTasks = () => {
     tasks = [];
     nextId = 1;
+    saveToStorage(tasks, getSettings());
 };
 export const setSort = (value) => {
     currentSort = value;

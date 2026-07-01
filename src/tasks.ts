@@ -1,3 +1,4 @@
+import { saveToStorage } from "./storage.js";
 import type { Task, SortBy, Priority, Status } from "./types";
 
 let tasks: Task[] = [];
@@ -46,6 +47,8 @@ export const addTask = (taskName: string, priority: Priority = "low"): void => {
     priority,
     createdAt: new Date(),
   });
+
+  saveToStorage(tasks, getSettings());
 };
 
 export const toggleTask = (taskId: number): void => {
@@ -54,6 +57,8 @@ export const toggleTask = (taskId: number): void => {
   if (!task) return;
 
   task.status = task.status === "pending" ? "completed" : "pending";
+
+  saveToStorage(tasks, getSettings());
 };
 
 export const deleteTask = (taskId: number): void => {
@@ -62,12 +67,14 @@ export const deleteTask = (taskId: number): void => {
   if (index !== -1) {
     tasks.splice(index, 1);
   }
+  saveToStorage(tasks, getSettings());
 };
 
 export const clearTasks = (): void => {
   tasks = [];
 
   nextId = 1;
+  saveToStorage(tasks, getSettings());
 };
 
 export const setSort = (value: SortBy): void => {
