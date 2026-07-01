@@ -1,4 +1,5 @@
-import type { Task, Priority, Status, SortBy, Settings } from "./types";
+import type { Task, Priority, Status, SortBy, Settings } from "./types.js";
+import { capitalize, procentTracker, validateTaskName } from "./utils.js";
 
 const header = document.querySelector<HTMLElement>("#header");
 const taskGrid = document.querySelector<HTMLDivElement>("#task-grid");
@@ -15,7 +16,6 @@ clearAllButton.classList.add("btn", "clear-all-button");
 clearAllButton.textContent = " DELETE ALL TASKS";
 
 const lastSave = document.createElement("p");
-
 
 let tasks: Task[] = [];
 
@@ -69,20 +69,6 @@ const getStatusTasks = (status: Status): Task[] => {
 
 const getPriorityTasks = (priority: Priority): Task[] => {
   return tasks.filter((tasks) => tasks.priority === priority);
-};
-
-const procentTracker = (num1: number, num2: number) => {
-  if (num1 && num2) {
-    return ((num1 / num2) * 100).toFixed(2);
-  }
-
-  if (!num1 || !num2) {
-    return 0;
-  }
-};
-
-const capitalize = (text: string): string => {
-  return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
 const saveToStorage = (): void => {
@@ -309,22 +295,6 @@ function renderStatusBar(): void {
     </div>
     `;
   taskGrid?.before(statusBar);
-}
-
-function validateTaskName(name: string): string {
-  if (name === "") {
-    return "Task name is required.";
-  }
-
-  if (name.length < 3) {
-    return "Task name needs to be larger than 3 characters.";
-  }
-
-  if (name.length > 40) {
-    return "Task can't be longer than 40 characters";
-  }
-
-  return "";
 }
 
 function createTaskCard(task: Task): HTMLElement {

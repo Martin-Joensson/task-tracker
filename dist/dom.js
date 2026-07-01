@@ -1,3 +1,4 @@
+import { capitalize, procentTracker, validateTaskName } from "./utils.js";
 const header = document.querySelector("#header");
 const taskGrid = document.querySelector("#task-grid");
 const footer = document.querySelector("#footer");
@@ -50,17 +51,6 @@ const getStatusTasks = (status) => {
 };
 const getPriorityTasks = (priority) => {
     return tasks.filter((tasks) => tasks.priority === priority);
-};
-const procentTracker = (num1, num2) => {
-    if (num1 && num2) {
-        return ((num1 / num2) * 100).toFixed(2);
-    }
-    if (!num1 || !num2) {
-        return 0;
-    }
-};
-const capitalize = (text) => {
-    return text.charAt(0).toUpperCase() + text.slice(1);
 };
 const saveToStorage = () => {
     const lastSave = new Date();
@@ -235,18 +225,6 @@ function renderStatusBar() {
     `;
     taskGrid?.before(statusBar);
 }
-function validateTaskName(name) {
-    if (name === "") {
-        return "Task name is required.";
-    }
-    if (name.length < 3) {
-        return "Task name needs to be larger than 3 characters.";
-    }
-    if (name.length > 40) {
-        return "Task can't be longer than 40 characters";
-    }
-    return "";
-}
 function createTaskCard(task) {
     const card = document.createElement("article");
     card.classList.add("card", `${task.priority}-priority`);
@@ -335,5 +313,4 @@ createHeader();
 createAddBar();
 createFooter();
 updateUI();
-export {};
 //# sourceMappingURL=dom.js.map
