@@ -199,7 +199,6 @@ function createAddBar() {
     const errorMessage = document.createElement("p");
     errorMessage.classList.add("error-message");
     errorMessage.textContent = "";
-    console.log(errorMessage);
     form.append(addTitle, input, charCounter, errorMessage, select, addButton);
     // Put the form above the task grid
     taskGrid?.before(form);

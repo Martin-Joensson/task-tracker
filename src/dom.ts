@@ -1,3 +1,5 @@
+import type { Task, Priority, Status, SortBy, Settings } from "./types";
+
 const header = document.querySelector<HTMLElement>("#header");
 const taskGrid = document.querySelector<HTMLDivElement>("#task-grid");
 const footer = document.querySelector<HTMLDivElement>("#footer");
@@ -14,28 +16,8 @@ clearAllButton.textContent = " DELETE ALL TASKS";
 
 const lastSave = document.createElement("p");
 
-type Priority = "low" | "medium" | "high";
-type Status = "pending" | "completed";
-
-type Task = {
-  id: number;
-  name: string;
-  status: Status;
-  priority: Priority;
-  createdAt: Date;
-  description?: string;
-  notes?: string;
-};
-
-type Settings = {
-  sort: SortBy;
-  priorityFilter: Priority | "all";
-  statusFilter: Status | "all";
-};
 
 let tasks: Task[] = [];
-
-type SortBy = "created-newest" | "created-oldest" | "priority" | "alphabetical";
 
 let currentPriorityFilter: Priority | "all" = "all";
 let currentStatusFilter: Status | "all" = "all";
@@ -281,8 +263,6 @@ function createAddBar(): void {
   const errorMessage = document.createElement("p");
   errorMessage.classList.add("error-message");
   errorMessage.textContent = "";
-
-  console.log(errorMessage);
 
   form.append(addTitle, input, charCounter, errorMessage, select, addButton);
 
