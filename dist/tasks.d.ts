@@ -1,3 +1,4 @@
+import type { Task, SortBy, Priority, Status } from "./types";
 export declare const getTasks: () => Task[];
 export declare const getSettings: () => Settings;
 export declare const getSort: () => SortBy;

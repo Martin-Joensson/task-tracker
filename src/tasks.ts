@@ -1,3 +1,5 @@
+import type { Task, SortBy, Priority, Status } from "./types";
+
 let tasks: Task[] = [];
 
 let currentSort: SortBy = "created-newest";
