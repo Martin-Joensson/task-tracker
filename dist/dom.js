@@ -1,5 +1,6 @@
 import { capitalize, procentTracker, validateTaskName } from "./utils.js";
 import { saveToStorage, loadFromStorage } from "./storage.js";
+import { getSort, getPriorityFilter, getStatusFilter, setState, getTasks, getVisibleTasks, addTask, deleteTask, toggleTask, clearTasks, setSort, setPriorityFilter, } from "./tasks.js";
 const header = document.querySelector("#header");
 const taskGrid = document.querySelector("#task-grid");
 const footer = document.querySelector("#footer");
@@ -11,85 +12,11 @@ const clearAllButton = document.createElement("button");
 clearAllButton.classList.add("btn", "clear-all-button");
 clearAllButton.textContent = " DELETE ALL TASKS";
 const lastSave = document.createElement("p");
-let tasks = [];
-const loaded = loadFromStorage();
-tasks = loaded.tasks;
-let currentPriorityFilter = loaded.settings.priorityFilter;
-let currentStatusFilter = loaded.settings.statusFilter;
-let currentSort = loaded.settings.sort;
-function getSettings() {
-    return {
-        sort: currentSort,
-        priorityFilter: currentPriorityFilter,
-        statusFilter: currentStatusFilter,
-    };
-}
-let nextId = tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
-function getVisibleTasks() {
-    let visible = [...tasks];
-    // Filtering
-    if (currentPriorityFilter !== "all") {
-        visible = visible.filter((task) => task.priority === currentPriorityFilter);
-    }
-    if (currentStatusFilter !== "all") {
-        visible = visible.filter((task) => task.status === currentStatusFilter);
-    }
-    // Sorting
-    switch (currentSort) {
-        case "created-newest":
-            visible.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-            break;
-        case "created-oldest":
-            visible.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-            break;
-        case "alphabetical":
-            visible.sort((a, b) => a.name.localeCompare(b.name));
-            break;
-        case "priority":
-            const order = {
-                high: 3,
-                medium: 2,
-                low: 1,
-            };
-            visible.sort((a, b) => order[b.priority] - order[a.priority]);
-            break;
-    }
-    return visible;
-}
 const getStatusTasks = (status) => {
-    return tasks.filter((tasks) => tasks.status === status);
+    return getTasks().filter((tasks) => tasks.status === status);
 };
 const getPriorityTasks = (priority) => {
-    return tasks.filter((tasks) => tasks.priority === priority);
-};
-const clearTasks = () => {
-    tasks = [];
-    saveToStorage(tasks, getSettings());
-    nextId = 1;
-};
-const addTask = (taskName, priority = "low") => {
-    tasks.push({
-        id: nextId++,
-        name: taskName,
-        status: "pending",
-        priority,
-        createdAt: new Date(),
-    });
-    saveToStorage(tasks, getSettings());
-};
-const toggleTask = (taskId) => {
-    const task = tasks.find((task) => task.id === taskId);
-    if (!task)
-        return;
-    task.status = task.status === "pending" ? "completed" : "pending";
-    saveToStorage(tasks, getSettings());
-};
-const deleteTask = (taskId) => {
-    const index = tasks.findIndex((task) => task.id === taskId);
-    if (index !== -1) {
-        tasks.splice(index, 1);
-    }
-    saveToStorage(tasks, getSettings());
+    return getTasks().filter((tasks) => tasks.priority === priority);
 };
 function createSortSelection() {
     const sortSelect = document.createElement("select");
@@ -100,10 +27,9 @@ function createSortSelection() {
     <option value="priority">Priority</option>
     <option value="alphabetical">Alphabetical</option>
 `;
-    sortSelect.value = currentSort;
+    sortSelect.value = getSort();
     sortSelect.addEventListener("change", () => {
-        currentSort = sortSelect.value;
-        saveToStorage(tasks, getSettings());
+        setSort(sortSelect.value);
         updateUI();
     });
     return sortSelect;
@@ -117,10 +43,9 @@ function createPrioritySelection() {
     <option value="medium">Medium</option>
     <option value="low">Low</option>
 `;
-    prioritySelect.value = currentPriorityFilter;
+    prioritySelect.value = getPriorityFilter();
     prioritySelect.addEventListener("change", () => {
-        currentPriorityFilter = prioritySelect.value;
-        saveToStorage(tasks, getSettings());
+        setPriorityFilter(prioritySelect.value);
         updateUI();
     });
     return prioritySelect;
@@ -194,13 +119,13 @@ function renderStatusBar() {
     const highPriorityTasks = getPriorityTasks("high");
     statusBar.innerHTML = `<h2 class=>Status</h2>
   <div class="status-bar">
-    <p>Total tasks: ${tasks.length} </p>
+    <p>Total tasks: ${getTasks().length} </p>
     <p>Completed: ${completedTasks.length} </p>
     <p>Pending: ${pendingTasks.length} </p>
     <p> Low Priority: ${lowPriorityTasks.length} </p>
     <p> Medium Priority: ${mediumPriorityTasks.length} </p>
     <p> High Priority: ${highPriorityTasks.length} </p>
-    <p> Procent complete: ${procentTracker(completedTasks.length, tasks.length)}%</p>
+    <p> Procent complete: ${procentTracker(completedTasks.length, getTasks().length)}%</p>
     </div>
     `;
     taskGrid?.before(statusBar);
@@ -261,7 +186,7 @@ function renderTasks() {
     if (taskGrid) {
         taskGrid.innerHTML = "";
     }
-    if (tasks.length === 0) {
+    if (getTasks().length === 0) {
         const noTasks = document.createElement("p");
         noTasks.textContent = "No tasks yet.";
         taskGrid?.append(noTasks);
@@ -288,7 +213,7 @@ function updateUI() {
     renderTasks();
     renderFooter();
 }
-loadFromStorage();
+setState(loadFromStorage());
 createHeader();
 createAddBar();
 createFooter();
