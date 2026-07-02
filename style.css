@@ -449,7 +449,6 @@ form {
 }
 
 #footer {
-
   bottom: 0;
   padding-block: 2rem;
 }
@@ -461,4 +460,10 @@ form {
   &::hover. &::focus-visible {
     background: rgba(255, 10, 10, 0.7);
   }
+}
+
+#dog-image {
+  width: 50%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
 }

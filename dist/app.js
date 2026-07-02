@@ -1,6 +1,6 @@
 import { loadFromStorage } from "./storage.js";
 import { setState } from "./tasks.js";
-import { renderHeader, renderTasks, renderFooter, renderAddBar, } from "./render.js";
+import { initRender, renderHeader, renderTasks, renderFooter, renderAddBar, } from "./render.js";
 const statusBar = document.createElement("div");
 statusBar.classList.add("status-area");
 const footerContainer = document.createElement("div");
@@ -12,10 +12,10 @@ const lastSave = document.createElement("p");
 function updateUI() {
     const lastSaved = localStorage.getItem("lastSaved");
     renderHeader(updateUI);
+    renderAddBar();
     renderTasks(updateUI);
     renderFooter(lastSaved, updateUI);
 }
 setState(loadFromStorage());
 updateUI();
-renderAddBar(updateUI, taskGrid);
 //# sourceMappingURL=app.js.map

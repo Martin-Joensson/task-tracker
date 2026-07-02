@@ -1,11 +1,13 @@
 import { loadFromStorage } from "./storage.js";
 import { setState } from "./tasks.js";
 import {
+  initRender,
   renderHeader,
   renderTasks,
   renderFooter,
   renderAddBar,
 } from "./render.js";
+
 
 const statusBar = document.createElement("div");
 statusBar.classList.add("status-area");
@@ -19,14 +21,14 @@ clearAllButton.textContent = " DELETE ALL TASKS";
 
 const lastSave = document.createElement("p");
 
-
 function updateUI(): void {
   const lastSaved = localStorage.getItem("lastSaved");
   renderHeader(updateUI);
+   renderAddBar();
   renderTasks(updateUI);
   renderFooter(lastSaved, updateUI);
 }
 
 setState(loadFromStorage());
 updateUI();
-renderAddBar(updateUI, taskGrid);
+
