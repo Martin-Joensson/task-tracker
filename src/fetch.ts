@@ -1,6 +1,9 @@
 const button = document.querySelector("#dog-button") as HTMLButtonElement;
 const image = document.querySelector("#dog-image") as HTMLImageElement;
 const loading = document.querySelector("#dog-loading") as HTMLParagraphElement;
+const breedSelect = document.querySelector(
+  "#breed-select",
+) as HTMLSelectElement;
 
 button.addEventListener("click", getDog);
 
@@ -9,20 +12,34 @@ type DogResponse = {
   status: string;
 };
 
-function getRandomNumber(): number {
-  let randomNumber = Math.random();
-  return randomNumber;
+const breeds = [
+  { value: "random", label: "Random" },
+  { value: "whippet", label: "Whippet" },
+  { value: "shiba", label: "Shiba" },
+  { value: "poodle/standard", label: "Standard Poodle" },
+];
+
+for (const breed of breeds) {
+  const option = document.createElement("option");
+  option.value = breed.value;
+  option.textContent = breed.label;
+
+  breedSelect.append(option);
 }
 
 async function getDog(): Promise<void> {
-  let apiSrc = "https://dog.ceo/api/breed/whippet/images/random";
-  if (getRandomNumber() < 0.2) {
-    apiSrc = "https://dog.ceo/api/breed/poodle/standard/images/random";
-  } else if (getRandomNumber() < 0.6) {
-    apiSrc = "https://dog.ceo/api/breed/shiba/images/random";
-  } else {
-    apiSrc = "https://dog.ceo/api/breed/whippet/images/random";
-  }
+  const breed = breedSelect?.value ?? "whippet";
+  const apiSrc =
+    breed === "random"
+      ? "https://dog.ceo/api/breeds/image/random"
+      : `https://dog.ceo/api/breed/${breed}/images/random`;
+  
+  // let apiSrc = `https://dog.ceo/api/breed/${breed}/images/random`;
+  // if (breed === "random") {
+  //   apiSrc = "https://dog.ceo/api/breeds/images/random";
+  // } else {
+  //   apiSrc = `https://dog.ceo/api/breed/${breed}/images/random`;
+  // }
 
   try {
     button.disabled = true;

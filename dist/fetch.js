@@ -1,22 +1,31 @@
 const button = document.querySelector("#dog-button");
 const image = document.querySelector("#dog-image");
 const loading = document.querySelector("#dog-loading");
+const breedSelect = document.querySelector("#breed-select");
 button.addEventListener("click", getDog);
-function getRandomNumber() {
-    let randomNumber = Math.random();
-    return randomNumber;
+const breeds = [
+    { value: "random", label: "Random" },
+    { value: "whippet", label: "Whippet" },
+    { value: "shiba", label: "Shiba" },
+    { value: "poodle/standard", label: "Standard Poodle" },
+];
+for (const breed of breeds) {
+    const option = document.createElement("option");
+    option.value = breed.value;
+    option.textContent = breed.label;
+    breedSelect.append(option);
 }
 async function getDog() {
-    let apiSrc = "https://dog.ceo/api/breed/whippet/images/random";
-    if (getRandomNumber() < 0.2) {
-        apiSrc = "https://dog.ceo/api/breed/poodle/standard/images/random";
-    }
-    else if (getRandomNumber() < 0.6) {
-        apiSrc = "https://dog.ceo/api/breed/shiba/images/random";
-    }
-    else {
-        apiSrc = "https://dog.ceo/api/breed/whippet/images/random";
-    }
+    const breed = breedSelect?.value ?? "whippet";
+    const apiSrc = breed === "random"
+        ? "https://dog.ceo/api/breeds/image/random"
+        : `https://dog.ceo/api/breed/${breed}/images/random`;
+    // let apiSrc = `https://dog.ceo/api/breed/${breed}/images/random`;
+    // if (breed === "random") {
+    //   apiSrc = "https://dog.ceo/api/breeds/images/random";
+    // } else {
+    //   apiSrc = `https://dog.ceo/api/breed/${breed}/images/random`;
+    // }
     try {
         button.disabled = true;
         loading.hidden = false;
