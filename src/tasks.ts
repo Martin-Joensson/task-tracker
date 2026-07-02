@@ -1,5 +1,5 @@
 import { saveToStorage } from "./storage.js";
-import type { Task, SortBy, Priority, Status } from "./types";
+import type { Task, SortBy, Priority, Status, Settings } from "./types";
 
 let tasks: Task[] = [];
 
@@ -57,7 +57,6 @@ export const toggleTask = (taskId: number): void => {
   if (!task) return;
 
   task.status = task.status === "pending" ? "completed" : "pending";
- 
 
   saveToStorage(tasks, getSettings());
 };

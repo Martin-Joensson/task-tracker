@@ -8,9 +8,9 @@ import {
   renderAddBar,
 } from "./render.js";
 
-const header = document.querySelector("#header");
-const taskGrid = document.querySelector("#task-grid");
-const footer = document.querySelector("#footer");
+const header = document.querySelector("#header") as HTMLHeadElement;
+const taskGrid = document.querySelector("#task-grid") as HTMLDivElement;
+const footer = document.querySelector("#footer") as HTMLElement;
 
 initRender({
   header,
