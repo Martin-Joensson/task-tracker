@@ -1,19 +1,62 @@
+import { capitalize } from "./utils.js";
 const button = document.querySelector("#dog-button");
 const image = document.querySelector("#dog-image");
 const loading = document.querySelector("#dog-loading");
 const breedSelect = document.querySelector("#breed-select");
+const searchInput = document.querySelector("#breed-search");
 button.addEventListener("click", getDog);
-const breeds = [
-    { value: "random", label: "Random" },
-    { value: "whippet", label: "Whippet" },
-    { value: "shiba", label: "Shiba" },
-    { value: "poodle/standard", label: "Standard Poodle" },
-];
+let allBreeds = [];
+const breeds = [];
+loadBreeds();
 for (const breed of breeds) {
     const option = document.createElement("option");
     option.value = breed.value;
     option.textContent = breed.label;
     breedSelect.append(option);
+}
+async function loadBreeds() {
+    const res = await fetch("https://dog.ceo/api/breeds/list/all");
+    const data = await res.json();
+    const breeds = data.message;
+    breedSelect.innerHTML = "";
+    const options = [{ value: "random", label: "Random" }];
+    const randomOption = document.createElement("option");
+    randomOption.value = "random";
+    randomOption.textContent = "Random";
+    breedSelect.append(randomOption);
+    for (const breed in breeds) {
+        const subBreeds = breeds[breed];
+        if (subBreeds.length === 0) {
+            options.push({
+                value: breed,
+                label: capitalize(breed),
+            });
+        }
+        else {
+            for (const sub of subBreeds) {
+                options.push({
+                    value: `${breed}/${sub}`,
+                    label: `${capitalize(breed)} (${capitalize(sub)})`,
+                });
+            }
+        }
+    }
+    allBreeds = options;
+    renderBreedOptions(allBreeds);
+}
+searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase();
+    const filtered = allBreeds.filter((breed) => breed.label.toLowerCase().includes(query));
+    renderBreedOptions(filtered);
+});
+function renderBreedOptions(options) {
+    breedSelect.innerHTML = "";
+    for (const breed of options) {
+        const option = document.createElement("option");
+        option.value = breed.value;
+        option.textContent = breed.label;
+        breedSelect.append(option);
+    }
 }
 async function getDog() {
     const breed = breedSelect?.value ?? "whippet";
@@ -44,5 +87,4 @@ async function getDog() {
     button.disabled = false;
 }
 getDog();
-export {};
 //# sourceMappingURL=fetch.js.map
