@@ -57,6 +57,7 @@ export const toggleTask = (taskId: number): void => {
   if (!task) return;
 
   task.status = task.status === "pending" ? "completed" : "pending";
+ 
 
   saveToStorage(tasks, getSettings());
 };

@@ -88,7 +88,7 @@
 img {
   max-width: 100%;
   height: auto;
-  display: block;
+  /* display: block; */
   object-fit: cover;
 }
 
@@ -417,7 +417,7 @@ form {
   padding-block: 1rem;
 }
 
-.delete-btn {
+.delete-button {
   background-color: var(--color-high);
 
   &::hover,
@@ -462,8 +462,17 @@ form {
   }
 }
 
+.dog-section {
+  margin-block: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-5);
+}
+
 #dog-image {
   width: 50%;
-  aspect-ratio: 4/3;
+  border-radius: var(--spacing-2);
+  aspect-ratio: 1/1;
   object-fit: cover;
 }

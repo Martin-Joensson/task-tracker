@@ -3,7 +3,8 @@ import { capitalize, validateTaskName } from "./utils.js";
 let taskGrid = null;
 let header = null;
 let footer = null;
-// allow app.ts to inject DOM refs once
+let confirmDeleteId = null;
+let confirmTimeout = null;
 export function initRender(dom) {
     header = dom.header;
     taskGrid = dom.taskGrid;
@@ -53,7 +54,7 @@ export function createTaskCard(task, updateUI) {
     ribbon.classList.add("ribbon");
     if (task.status === "completed") {
         ribbon.textContent = "completed";
-        ribbon.classList.add("ribbon-complete");
+        ribbon.classList.add("ribbon-complete", "completed");
     }
     else {
         ribbon.textContent = task.priority;
@@ -65,12 +66,34 @@ export function createTaskCard(task, updateUI) {
         updateUI();
     });
     const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("delete-button");
+    if (confirmDeleteId === task.id) {
+        deleteButton.textContent = "Are you sure?";
+        deleteButton.classList.add("delete-confirm");
+    }
+    else {
+        deleteButton.textContent = "Delete";
+    }
     deleteButton.addEventListener("click", () => {
-        deleteTask(task.id);
+        if (confirmTimeout) {
+            clearTimeout(confirmTimeout);
+        }
+        confirmTimeout = window.setTimeout(() => {
+            confirmDeleteId = null;
+            updateUI();
+        }, 2000);
+        updateUI();
+        if (confirmDeleteId === task.id) {
+            deleteTask(task.id);
+            confirmDeleteId = null;
+            updateUI();
+            return;
+        }
+        confirmDeleteId = task.id;
         updateUI();
     });
     const controls = document.createElement("div");
+    controls.classList.add("task-controls");
     controls.append(completeButton, deleteButton);
     card.append(title, date, ribbon, controls);
     return card;
@@ -99,7 +122,7 @@ export function renderStatusBar(container) {
     <p>Pending: ${pending.length}</p>
   `;
 }
-export function renderAddBar(updateUI, taskGrid) {
+export function renderAddBar(updateUI) {
     if (!taskGrid)
         return;
     const addBar = document.createElement("div");

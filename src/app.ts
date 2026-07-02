@@ -8,6 +8,15 @@ import {
   renderAddBar,
 } from "./render.js";
 
+const header = document.querySelector("#header");
+const taskGrid = document.querySelector("#task-grid");
+const footer = document.querySelector("#footer");
+
+initRender({
+  header,
+  taskGrid,
+  footer,
+});
 
 const statusBar = document.createElement("div");
 statusBar.classList.add("status-area");
@@ -24,11 +33,11 @@ const lastSave = document.createElement("p");
 function updateUI(): void {
   const lastSaved = localStorage.getItem("lastSaved");
   renderHeader(updateUI);
-   renderAddBar();
   renderTasks(updateUI);
   renderFooter(lastSaved, updateUI);
 }
 
 setState(loadFromStorage());
-updateUI();
 
+renderAddBar(updateUI);
+updateUI();
