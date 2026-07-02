@@ -106,13 +106,6 @@ async function getDog(): Promise<void> {
       ? "https://dog.ceo/api/breeds/image/random"
       : `https://dog.ceo/api/breed/${breed}/images/random`;
 
-  // let apiSrc = `https://dog.ceo/api/breed/${breed}/images/random`;
-  // if (breed === "random") {
-  //   apiSrc = "https://dog.ceo/api/breeds/images/random";
-  // } else {
-  //   apiSrc = `https://dog.ceo/api/breed/${breed}/images/random`;
-  // }
-
   try {
     button.disabled = true;
     loading.hidden = false;
@@ -128,10 +121,10 @@ async function getDog(): Promise<void> {
   } catch (error) {
     alert("Somthing went wrong.");
     console.log(error);
+  } finally {
+    loading.hidden = true;
+    button.disabled = false;
   }
-
-  loading.hidden = true;
-  button.disabled = false;
 }
 
 getDog();

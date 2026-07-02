@@ -63,12 +63,6 @@ async function getDog() {
     const apiSrc = breed === "random"
         ? "https://dog.ceo/api/breeds/image/random"
         : `https://dog.ceo/api/breed/${breed}/images/random`;
-    // let apiSrc = `https://dog.ceo/api/breed/${breed}/images/random`;
-    // if (breed === "random") {
-    //   apiSrc = "https://dog.ceo/api/breeds/images/random";
-    // } else {
-    //   apiSrc = `https://dog.ceo/api/breed/${breed}/images/random`;
-    // }
     try {
         button.disabled = true;
         loading.hidden = false;
@@ -83,8 +77,10 @@ async function getDog() {
         alert("Somthing went wrong.");
         console.log(error);
     }
-    loading.hidden = true;
-    button.disabled = false;
+    finally {
+        loading.hidden = true;
+        button.disabled = false;
+    }
 }
 getDog();
 //# sourceMappingURL=fetch.js.map

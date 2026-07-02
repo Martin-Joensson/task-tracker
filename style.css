@@ -483,3 +483,11 @@ form {
   text-align: center;
   place-content: center;
 }
+
+.flex {
+  display: flex;
+}
+
+.flex-col{
+  flex-direction: column;
+}
