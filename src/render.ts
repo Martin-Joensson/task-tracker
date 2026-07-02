@@ -101,7 +101,7 @@ export function createTaskCard(task: Task, updateUI: () => void): HTMLElement {
   });
 
   const deleteButton = document.createElement("button");
-  deleteButton.classList.add("delete-button")
+  deleteButton.classList.add("delete-button");
 
   if (confirmDeleteId === task.id) {
     deleteButton.textContent = "Are you sure?";
@@ -111,7 +111,6 @@ export function createTaskCard(task: Task, updateUI: () => void): HTMLElement {
   }
 
   deleteButton.addEventListener("click", () => {
-  
     if (confirmTimeout) {
       clearTimeout(confirmTimeout);
     }
@@ -163,13 +162,32 @@ export function renderTasks(updateUI: () => void) {
 }
 
 export function renderStatusBar(container: HTMLElement) {
-  const completed = getTasks().filter((t) => t.status === "completed");
-  const pending = getTasks().filter((t) => t.status === "pending");
+  const tasks = getTasks();
+
+  const completed = tasks.filter((t) => t.status === "completed");
+  const pending = tasks.filter((t) => t.status === "pending");
+
+  const high = tasks.filter((t) => t.priority === "high");
+  const medium = tasks.filter((t) => t.priority === "medium");
+  const low = tasks.filter((t) => t.priority === "low");
+
+  const completionPercent =
+    tasks.length === 0
+      ? 0
+      : Math.round((completed.length / tasks.length) * 100);
 
   container.innerHTML = `
-    <h2>Status</h2>
-    <p>Completed: ${completed.length}</p>
-    <p>Pending: ${pending.length}</p>
+  <h2>Status</h2>
+  
+    <div class="status-bar">
+      <p>Total tasks: ${tasks.length}</p>
+      <p>Completed: ${completed.length}</p>
+      <p>Pending: ${pending.length}</p>
+      <p>High priority: ${high.length}</p>
+      <p>Medium priority: ${medium.length}</p>
+      <p>Low priority: ${low.length}</p>
+      <p>Completion: ${completionPercent}%</p>
+    </div>
   `;
 }
 
@@ -273,23 +291,3 @@ export function renderFooter(lastSaved: string | null, updateUI: () => void) {
   footerContainer.append(lastSave, clearAllButton);
   footer.append(footerContainer);
 }
-
-// export function renderFooter() {
-//   if (!footer) return;
-
-//   const lastSave = document.createElement("p");
-//   const clearBtn = document.createElement("button");
-
-//   clearBtn.textContent = "DELETE ALL TASKS";
-
-//   clearBtn.addEventListener("click", () => {
-//     import("./tasks.js").then(({ clearTasks }) => {
-//       clearTasks();
-//     });
-//   });
-
-//   lastSave.textContent = `Last save to local storage: ${localStorage.getItem("lastSaved")}`;
-
-//   footer.innerHTML = "";
-//   footer.append(lastSave, clearBtn);
-// }

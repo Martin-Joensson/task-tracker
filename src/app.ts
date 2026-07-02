@@ -6,6 +6,7 @@ import {
   renderTasks,
   renderFooter,
   renderAddBar,
+  renderStatusBar,
 } from "./render.js";
 
 const header = document.querySelector("#header") as HTMLHeadElement;
@@ -18,8 +19,9 @@ initRender({
   footer,
 });
 
-const statusBar = document.createElement("div");
+const statusBar = document.createElement("div") as HTMLElement;
 statusBar.classList.add("status-area");
+taskGrid.after(statusBar);
 
 const footerContainer = document.createElement("div");
 footerContainer.classList.add("footer", "content-grid");
@@ -32,7 +34,9 @@ const lastSave = document.createElement("p");
 
 function updateUI(): void {
   const lastSaved = localStorage.getItem("lastSaved");
+
   renderHeader(updateUI);
+  renderStatusBar(statusBar);
   renderTasks(updateUI);
   renderFooter(lastSaved, updateUI);
 }

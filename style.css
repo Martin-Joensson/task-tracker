@@ -394,6 +394,7 @@ HTML: <div class="ribbon">Your text content</div> */
 }
 
 .status-area {
+  margin-block: var(--spacing-5);
   padding: var(--spacing-2);
   border: 2px solid;
   border-radius: var(--rounded-2);

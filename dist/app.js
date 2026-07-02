@@ -1,6 +1,6 @@
 import { loadFromStorage } from "./storage.js";
 import { setState } from "./tasks.js";
-import { initRender, renderHeader, renderTasks, renderFooter, renderAddBar, } from "./render.js";
+import { initRender, renderHeader, renderTasks, renderFooter, renderAddBar, renderStatusBar, } from "./render.js";
 const header = document.querySelector("#header");
 const taskGrid = document.querySelector("#task-grid");
 const footer = document.querySelector("#footer");
@@ -11,6 +11,7 @@ initRender({
 });
 const statusBar = document.createElement("div");
 statusBar.classList.add("status-area");
+taskGrid.after(statusBar);
 const footerContainer = document.createElement("div");
 footerContainer.classList.add("footer", "content-grid");
 const clearAllButton = document.createElement("button");
@@ -20,6 +21,7 @@ const lastSave = document.createElement("p");
 function updateUI() {
     const lastSaved = localStorage.getItem("lastSaved");
     renderHeader(updateUI);
+    renderStatusBar(statusBar);
     renderTasks(updateUI);
     renderFooter(lastSaved, updateUI);
 }

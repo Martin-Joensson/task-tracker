@@ -114,12 +114,27 @@ export function renderTasks(updateUI) {
     }
 }
 export function renderStatusBar(container) {
-    const completed = getTasks().filter((t) => t.status === "completed");
-    const pending = getTasks().filter((t) => t.status === "pending");
+    const tasks = getTasks();
+    const completed = tasks.filter((t) => t.status === "completed");
+    const pending = tasks.filter((t) => t.status === "pending");
+    const high = tasks.filter((t) => t.priority === "high");
+    const medium = tasks.filter((t) => t.priority === "medium");
+    const low = tasks.filter((t) => t.priority === "low");
+    const completionPercent = tasks.length === 0
+        ? 0
+        : Math.round((completed.length / tasks.length) * 100);
     container.innerHTML = `
-    <h2>Status</h2>
-    <p>Completed: ${completed.length}</p>
-    <p>Pending: ${pending.length}</p>
+  <h2>Status</h2>
+  
+    <div class="status-bar">
+      <p>Total tasks: ${tasks.length}</p>
+      <p>Completed: ${completed.length}</p>
+      <p>Pending: ${pending.length}</p>
+      <p>High priority: ${high.length}</p>
+      <p>Medium priority: ${medium.length}</p>
+      <p>Low priority: ${low.length}</p>
+      <p>Completion: ${completionPercent}%</p>
+    </div>
   `;
 }
 export function renderAddBar(updateUI) {
@@ -194,18 +209,4 @@ export function renderFooter(lastSaved, updateUI) {
     footerContainer.append(lastSave, clearAllButton);
     footer.append(footerContainer);
 }
-// export function renderFooter() {
-//   if (!footer) return;
-//   const lastSave = document.createElement("p");
-//   const clearBtn = document.createElement("button");
-//   clearBtn.textContent = "DELETE ALL TASKS";
-//   clearBtn.addEventListener("click", () => {
-//     import("./tasks.js").then(({ clearTasks }) => {
-//       clearTasks();
-//     });
-//   });
-//   lastSave.textContent = `Last save to local storage: ${localStorage.getItem("lastSaved")}`;
-//   footer.innerHTML = "";
-//   footer.append(lastSave, clearBtn);
-// }
 //# sourceMappingURL=render.js.map
