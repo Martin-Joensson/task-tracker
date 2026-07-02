@@ -476,3 +476,10 @@ form {
   aspect-ratio: 1/1;
   object-fit: cover;
 }
+
+#dog-loading {
+  width: 50%;
+  aspect-ratio: 1/1;
+  text-align: center;
+  place-content: center;
+}
