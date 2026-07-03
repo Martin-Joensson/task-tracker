@@ -30,8 +30,6 @@ const clearAllButton = document.createElement("button");
 clearAllButton.classList.add("btn", "clear-all-button");
 clearAllButton.textContent = " DELETE ALL TASKS";
 
-const lastSave = document.createElement("p");
-
 function updateUI(): void {
   const lastSaved = localStorage.getItem("lastSaved");
 

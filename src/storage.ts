@@ -43,27 +43,3 @@ export const loadFromStorage = (): {
     settings,
   };
 };
-
-//   const taskJson = localStorage.getItem("tasks");
-
-//   if (taskJson) {
-//     const parsed = JSON.parse(taskJson);
-//     tasks = parsed.map((task: Task) => ({
-//       ...task,
-//       createdAt: new Date(task.createdAt),
-//     }));
-
-//     nextId = tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
-//   }
-
-//   const settingsJson = localStorage.getItem("settings");
-
-//   if (settingsJson) {
-//     const settings: Settings = JSON.parse(settingsJson);
-
-//     currentSort = settings.sort;
-//     currentPriorityFilter = settings.priorityFilter;
-//     currentStatusFilter = settings.statusFilter;
-//   }
-
-//   return { tasks, settings };
